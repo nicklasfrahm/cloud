@@ -27,4 +27,12 @@ resources:
   kind: MachinePool
   path: github.com/nicklasfrahm/cloud/api/v1beta1
   version: v1beta1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: nicklasfrahm.dev
+  group: cloud
+  kind: KubernetesCluster
+  path: github.com/nicklasfrahm/cloud/api/v1beta1
+  version: v1beta1
 version: "3"
