@@ -1,30 +1,21 @@
 locals {
   # Load all region configuration files.
-  region_files = fileset("${path.cwd}/configs/regions", "*.yaml")
-  region_configs = {
-    for filename in local.region_files :
-    replace(filename, ".yaml", "") => yamldecode(file("${path.cwd}/configs/regions/${filename}"))
+  kubernetescluster_path = "${path.cwd}/deploy/manifests/kubernetesclusters"
+  kubernetescluster_files = fileset(local.kubernetescluster_path, "*.yaml")
+  kubernetescluster_configs = {
+    for filename in local.kubernetescluster_files :
+    replace(filename, ".yaml", "") => yamldecode(file("${local.kubernetescluster_path}/${filename}"))
   }
 
-  machine_files = fileset("${path.cwd}/configs/machines", "*.yaml")
-  machine_configs = {
-    for filename in local.machine_files :
-    replace(filename, ".yaml", "") => yamldecode(file("${path.cwd}/configs/machines/${filename}"))
-  }
-
-  hardware_profile_files = fileset("${path.cwd}/configs/hardwareprofiles", "*.yaml")
-  hardware_profile_configs = {
-    for filename in local.hardware_profile_files :
-    replace(filename, ".yaml", "") => yamldecode(file("${path.cwd}/configs/hardwareprofiles/${filename}"))
-  }
+  config = yamldecode(file("${path.cwd}/config.yaml"))
 }
 
-module "region" {
-  source = "./modules/region"
+module "kubernetescluster" {
+  source = "./modules/kubernetescluster"
 
-  for_each = local.region_configs
+  for_each = local.kubernetescluster_configs
 
-  region = each.value
-  machines = local.machine_configs
-  hardware_profiles = local.hardware_profile_configs
+  config = each.value
+
+  domain = local.config.dns.domain
 }

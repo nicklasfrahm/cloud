@@ -1,0 +1,11 @@
+apiVersion: cloud.nicklasfrahm.dev/v1beta1
+kind: KubernetesCluster
+metadata:
+  name: lab01
+spec:
+  cluster:
+    allowSchedulingOnControlPlanes: true
+  infrastructure:
+    controlPlane:
+      machinePools:
+        - name: lab01
