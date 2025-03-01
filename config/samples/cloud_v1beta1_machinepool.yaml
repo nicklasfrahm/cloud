@@ -1,9 +1,0 @@
-apiVersion: cloud.nicklasfrahm.dev/v1beta1
-kind: MachinePool
-metadata:
-  labels:
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/managed-by: kustomize
-  name: machinepool-sample
-spec:
-  # TODO(user): Add fields here
