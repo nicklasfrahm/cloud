@@ -17,6 +17,9 @@ limitations under the License.
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"k8s.io/klog"
 	"sigs.k8s.io/apiserver-runtime/pkg/builder"
 
@@ -27,11 +30,16 @@ import (
 )
 
 func main() {
-	rootPath := pflag.String("root-path", "", "storage prefix for the object storage")
+	configPath := pflag.String("config-path", "", "storage prefix for the object storage")
 
-	err := builder.APIServer.
+	objectStorageConfig, err := os.ReadFile(*configPath)
+	if err != nil {
+		klog.Fatal(fmt.Errorf("failed to read object storage config: %v", err))
+	}
+
+	err = builder.APIServer.
 		// +kubebuilder:scaffold:resource-register
-		WithResourceAndHandler(&cloudv1.Machine{}, blob.NewJSONBLOBStorageProvider(&cloudv1.Machine{}, *rootPath)).
+		WithResourceAndHandler(&cloudv1.Machine{}, blob.NewJSONBLOBStorageProvider(&cloudv1.Machine{}, objectStorageConfig)).
 		WithoutEtcd().
 		Execute()
 	if err != nil {

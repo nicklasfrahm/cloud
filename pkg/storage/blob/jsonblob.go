@@ -13,9 +13,17 @@ import (
 	builderrest "sigs.k8s.io/apiserver-runtime/pkg/builder/rest"
 )
 
-func NewJSONBLOBStorageProvider(obj resource.Object, rootPath string) builderrest.ResourceHandlerProvider {
+// NewJSONBLOBStorageProvider returns a storage provider that creates JSON
+// files in an object storage bucket.
+//
+// For namespaced objects, the path is:
+// /<group>/<kind>s/namespaces/<namespace>/<name>.json
+//
+// For cluster-scoped objects, the path is:
+// /<group>/<kind>s/<name>.json
+func NewJSONBLOBStorageProvider(obj resource.Object, objectStorageConfig []byte) builderrest.ResourceHandlerProvider {
 	return func(scheme *runtime.Scheme, getter generic.RESTOptionsGetter) (rest.Storage, error) {
-		gr := obj.GetGroupVersionResource().GroupResource()
+		groupResource := obj.GetGroupVersionResource().GroupResource()
 		codec, _, err := storage.NewStorageCodec(storage.StorageCodecConfig{
 			StorageMediaType:  runtime.ContentTypeJSON,
 			StorageSerializer: serializer.NewCodecFactory(scheme),
@@ -29,12 +37,12 @@ func NewJSONBLOBStorageProvider(obj resource.Object, rootPath string) builderres
 		}
 
 		return NewBLOBREST(
-			gr,
+			groupResource,
 			codec,
-			rootPath,
 			obj.NamespaceScoped(),
 			obj.New,
 			obj.NewList,
-		), nil
+			objectStorageConfig,
+		)
 	}
 }
