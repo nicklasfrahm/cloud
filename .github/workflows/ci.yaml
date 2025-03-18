@@ -227,3 +227,160 @@ jobs:
 
       - name: Index CRDs
         run: curl -X GET "https://doc.crds.dev/github.com/nicklasfrahm/cloud@${RELEASE_GIT_TAG}"
+
+  check_charts:
+    name: Check charts
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pr
+
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
+      - name: Check for pending version updates
+        id: version
+        run: |
+          set -eou pipefail
+
+          cd pr
+
+          mapfile -t changed_charts < <(git diff --name-only main | grep -oP 'charts/\K[^/]+' | sort -u)
+
+          cd ..
+
+          pending=0
+          touch pending.md
+
+          echo '| Chart | Valid | `main` | `HEAD` |' >>pending.md
+          echo '| --- | --- | --- | --- |' >>pending.md
+
+          for chart in "${changed_charts[@]}"; do
+            pr_version=$(grep -oP 'version: \K[^ ]+' pr/charts/$chart/Chart.yaml)
+
+            # This is a new chart. Any version is valid.
+            if [[ ! -d "main/charts/$chart" ]]; then
+              echo "| $chart | ✅ | N/A | $pr_version |" >>pending.md
+              continue
+            fi
+
+            main_version=$(grep -oP 'version: \K[^ ]+' main/charts/$chart/Chart.yaml)
+
+            # The version in the `Chart.yaml` file has been updated.
+            if [[ "$main_version" != "$pr_version" ]]; then
+              echo "| $chart | ✅ | $main_version | $pr_version |" >>pending.md
+            fi
+
+            # The version in the `Chart.yaml` file has not been updated.
+            echo "| $chart | ❌ | $main_version | $pr_version |" >>pending.md
+            pending+=1
+          done
+
+          echo "pending=$pending" >>"$GITHUB_OUTPUT"
+
+          {
+            echo 'log<<EOF'
+            cat pending.md
+            echo EOF
+          } >>"$GITHUB_OUTPUT"
+
+      - name: Find pending version updates comment
+        uses: peter-evans/find-comment@v3
+        id: find-version
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "Pending version updates"
+
+      - name: Publish pending version updates
+        uses: peter-evans/create-or-update-comment@v4
+        if: steps.version.outputs.pending != '0'
+        with:
+          comment-id: ${{ steps.find-version.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## 📦 Pending version updates
+
+            When a chart is changed, the version in the `Chart.yaml` file must be updated.
+
+            ${{ steps.version.outputs.log }}
+          edit-mode: replace
+
+      - name: Delete pending version updates comment
+        if: steps.find-version.outputs.pending == '0' && steps.find-version.outputs.comment-id != ''
+        run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-version.outputs.comment-id }} -X DELETE
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fail on pending version updates
+        if: steps.version.outputs.pending != '0'
+        run: exit 1
+
+      - name: Lint charts
+        id: lint
+        run: |
+          set -eou pipefail
+
+          # Download dependencies and build lock files.
+          helm dep build pr/charts/*
+
+          if output=$(helm lint pr/charts/* --strict); then
+            echo 'result=0' >>"$GITHUB_OUTPUT"
+          else
+            echo 'result=1' >>"$GITHUB_OUTPUT"
+          fi
+
+          {
+            echo 'log<<EOF'
+            echo "$output"
+            echo EOF
+          } >>"$GITHUB_OUTPUT"
+
+      - name: Find lint comment
+        uses: peter-evans/find-comment@v3
+        id: find-lint
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "Helm linting"
+
+      - name: Publish lint results
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find-lint.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## ☸️ Helm linting
+
+            <details>
+            <summary><code>helm lint charts/* --strict</code></summary>
+
+            ```txt
+            ${{ steps.lint.outputs.log }}
+            ```
+
+            </details>
+          edit-mode: replace
+
+      - name: Delete lint comment
+        if: steps.lint.outputs.result == '0' && steps.find-lint.outputs.comment-id != ''
+        run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-lint.outputs.comment-id }} -X DELETE
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fail on lint errors
+        if: steps.lint.outputs.result != '0'
+        run: exit 1
