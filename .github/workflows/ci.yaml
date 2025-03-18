@@ -307,7 +307,8 @@ jobs:
 
       - name: Publish pending version updates
         uses: peter-evans/create-or-update-comment@v4
-        if: steps.version.outputs.pending != '0'
+        # TODO: Enable this.
+        # if: steps.version.outputs.pending != '0'
         with:
           comment-id: ${{ steps.find-version.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -319,11 +320,11 @@ jobs:
             ${{ steps.version.outputs.log }}
           edit-mode: replace
 
-      - name: Delete pending version updates comment
-        if: steps.find-version.outputs.pending == '0' && steps.find-version.outputs.comment-id != ''
-        run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-version.outputs.comment-id }} -X DELETE
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Delete pending version updates comment
+      #   if: steps.find-version.outputs.pending == '0' && steps.find-version.outputs.comment-id != ''
+      #   run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-version.outputs.comment-id }} -X DELETE
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fail on pending version updates
         if: steps.version.outputs.pending != '0'
