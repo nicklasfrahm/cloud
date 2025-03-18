@@ -321,7 +321,7 @@ jobs:
           edit-mode: replace
 
       - name: Delete pending version updates comment
-        if: steps.find-version.outputs.pending == '0' && steps.find-version.outputs.comment-id != ''
+        if: steps.version.outputs.pending == '0' && steps.find-version.outputs.comment-id != ''
         run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-version.outputs.comment-id }} -X DELETE
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
