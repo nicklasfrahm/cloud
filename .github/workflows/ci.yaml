@@ -270,7 +270,7 @@ jobs:
           echo '| --- | --- | --- | --- |' >>pending.md
 
           for chart in "${changed_charts[@]}"; do
-            pr_version=$(grep -oP 'version: \K[^ ]+' pr/charts/$chart/Chart.yaml | tr -d '\n')
+            pr_version=$(grep -oP '^version: \K[^\n]+' pr/charts/$chart/Chart.yaml | tr -d '\n')
 
             # This is a new chart. Any version is valid.
             if [[ ! -d "main/charts/$chart" ]]; then
@@ -278,7 +278,7 @@ jobs:
               continue
             fi
 
-            main_version=$(grep -oP 'version: \K[^ ]+' main/charts/$chart/Chart.yaml | tr -d '\n')
+            main_version=$(grep -oP '^version: \K[^\n]+' main/charts/$chart/Chart.yaml | tr -d '\n')
 
             # The version in the `Chart.yaml` file has been updated.
             if [[ "$main_version" != "$pr_version" ]]; then
