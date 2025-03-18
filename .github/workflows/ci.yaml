@@ -227,3 +227,77 @@ jobs:
 
       - name: Index CRDs
         run: curl -X GET "https://doc.crds.dev/github.com/nicklasfrahm/cloud@${RELEASE_GIT_TAG}"
+
+  check_charts:
+    name: Check charts
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pr
+
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
+      - name: Lint charts
+        id: lint
+        run: |
+          set -eou pipefail
+
+          {
+            echo 'log<<EOF'
+            if helm lint charts/* --strict; then
+              echo 'result=0' >>"$GITHUB_OUTPUT"
+            else
+              echo 'result=1' >>"$GITHUB_OUTPUT"
+            fi
+            echo EOF
+          } >"$GITHUB_OUTPUT"
+
+      - name: Find lint comment
+        uses: peter-evans/find-comment@v3
+        id: find
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "Helm linting:"
+
+      - name: Publish lint results
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ☸️ Helm linting:
+
+            <details>
+            <summary><code>helm lint charts/* --strict</code></summary>
+
+            ```txt
+            ${{ steps.lint.outputs.log }}
+            ```
+
+            </details>
+          edit-mode: replace
+
+      - name: Delete lint comment
+        if: steps.lint.outputs.output == '' && steps.find.outputs.comment-id != ''
+        run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find.outputs.comment-id }} -X DELETE
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fail on lint errors
+        if: steps.lint.outputs.result != '0'
+        run: exit 1
