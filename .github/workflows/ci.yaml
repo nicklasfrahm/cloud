@@ -257,16 +257,15 @@ jobs:
           set -eou pipefail
 
           if output=$(helm lint main/charts/* --strict); then
-            echo 'result=0'
+            echo 'result=0' >>"$GITHUB_OUTPUT"
           else
-            echo 'result=1'
+            echo 'result=1' >>"$GITHUB_OUTPUT"
           fi
 
           {
             echo 'log<<EOF'
             echo "$output"
             echo EOF
-            echo "result=$?"
           } >>"$GITHUB_OUTPUT"
 
       - name: Find lint comment
