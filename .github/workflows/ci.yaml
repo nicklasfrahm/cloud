@@ -376,7 +376,7 @@ jobs:
           edit-mode: replace
 
       - name: Delete lint comment
-        if: steps.lint.outputs.output == '' && steps.find-lint.outputs.comment-id != ''
+        if: steps.lint.outputs.result == '0' && steps.find-lint.outputs.comment-id != ''
         run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-lint.outputs.comment-id }} -X DELETE
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
