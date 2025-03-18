@@ -251,6 +251,84 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@v4
 
+      - name: Check for pending version updates
+        id: version
+        run: |
+          set -eou pipefail
+
+          cd pr
+
+          mapfile -t changed_charts < <(git diff --name-only main | grep -oP 'charts/\K[^/]+' | sort -u)
+
+          cd ..
+
+          pending=0
+          touch pending.md
+
+          echo '| Chart | Valid | `main` | `HEAD` |' >>pending.md
+          echo '| --- | --- | --- | --- |' >>pending.md
+
+          for chart in "${changed_charts[@]}"; do
+            pr_version=$(grep -oP 'version: \K[^ ]+' pr/charts/$chart/Chart.yaml)
+
+            # This is a new chart. Any version is valid.
+            if [[ ! -d "main/charts/$chart" ]]; then
+              echo "| $chart | ✅ | N/A | $pr_version |" >>pending.md
+              continue
+            fi
+
+            main_version=$(grep -oP 'version: \K[^ ]+' main/charts/$chart/Chart.yaml)
+
+            # The version in the `Chart.yaml` file has been updated.
+            if [[ "$main_version" != "$pr_version" ]]; then
+              echo "| $chart | ✅ | $main_version | $pr_version |" >>pending.md
+            fi
+
+            # The version in the `Chart.yaml` file has not been updated.
+            echo "| $chart | ❌ | $main_version | $pr_version |" >>pending.md
+            pending+=1
+          done
+
+          echo "pending=$pending" >>"$GITHUB_OUTPUT"
+
+          {
+            echo 'log<<EOF'
+            cat pending.md
+            echo EOF
+          } >>"$GITHUB_OUTPUT"
+
+      - name: Find pending version updates comment
+        uses: peter-evans/find-comment@v3
+        id: find-version
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "Pending version updates"
+
+      - name: Publish pending version updates
+        uses: peter-evans/create-or-update-comment@v4
+        if: steps.version.outputs.pending != '0'
+        with:
+          comment-id: ${{ steps.find-version.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## 📦 Pending version updates
+
+            When a chart is changed, the version in the `Chart.yaml` file must be updated.
+
+            ${{ steps.version.outputs.log }}
+          edit-mode: replace
+
+      - name: Delete pending version updates comment
+        if: steps.find-version.outputs.pending == '0' && steps.find-version.outputs.comment-id != ''
+        run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-version.outputs.comment-id }} -X DELETE
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fail on pending version updates
+        if: steps.version.outputs.pending != '0'
+        run: exit 1
+
       - name: Lint charts
         id: lint
         run: |
@@ -273,7 +351,7 @@ jobs:
 
       - name: Find lint comment
         uses: peter-evans/find-comment@v3
-        id: find
+        id: find-lint
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: "github-actions[bot]"
@@ -282,10 +360,10 @@ jobs:
       - name: Publish lint results
         uses: peter-evans/create-or-update-comment@v4
         with:
-          comment-id: ${{ steps.find.outputs.comment-id }}
+          comment-id: ${{ steps.find-lint.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            ☸️ Helm linting:
+            ## ☸️ Helm linting
 
             <details>
             <summary><code>helm lint charts/* --strict</code></summary>
@@ -298,8 +376,8 @@ jobs:
           edit-mode: replace
 
       - name: Delete lint comment
-        if: steps.lint.outputs.output == '' && steps.find.outputs.comment-id != ''
-        run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find.outputs.comment-id }} -X DELETE
+        if: steps.lint.outputs.output == '' && steps.find-lint.outputs.comment-id != ''
+        run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-lint.outputs.comment-id }} -X DELETE
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
