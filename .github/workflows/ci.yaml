@@ -264,7 +264,7 @@ jobs:
               echo 'result=1' >>"$GITHUB_OUTPUT"
             fi
             echo EOF
-          } >"$GITHUB_OUTPUT"
+          } >>"$GITHUB_OUTPUT"
 
       - name: Find lint comment
         uses: peter-evans/find-comment@v3
