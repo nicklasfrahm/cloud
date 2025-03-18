@@ -256,7 +256,10 @@ jobs:
         run: |
           set -eou pipefail
 
-          if output=$(helm lint main/charts/* --strict); then
+          # Download dependencies and build lock files.
+          helm dep build pr/charts/*
+
+          if output=$(helm lint pr/charts/* --strict); then
             echo 'result=0' >>"$GITHUB_OUTPUT"
           else
             echo 'result=1' >>"$GITHUB_OUTPUT"
@@ -290,8 +293,6 @@ jobs:
             ```txt
             ${{ steps.lint.outputs.log }}
             ```
-
-            Result: ${{ steps.lint.outputs.result }}
 
             </details>
           edit-mode: replace
