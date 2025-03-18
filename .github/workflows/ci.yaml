@@ -355,7 +355,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: "github-actions[bot]"
-          body-includes: "Helm linting:"
+          body-includes: "Helm linting"
 
       - name: Publish lint results
         uses: peter-evans/create-or-update-comment@v4
