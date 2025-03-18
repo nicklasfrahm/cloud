@@ -3,6 +3,8 @@
 machine:
   type: controlplane
   kubelet:
+    extraArgs:
+      rotate-server-certificates: "true"
     nodeIP:
       validSubnets:
         - 172.16.0.0/24
@@ -39,6 +41,8 @@ cluster:
       - 172.31.0.0/16
     serviceSubnets:
       - 172.30.0.0/16
+  proxy:
+    disabled: true
   etcd:
     advertisedSubnets:
       - 172.16.0.0/24

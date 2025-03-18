@@ -5,6 +5,8 @@ machine:
     nodeIP:
       validSubnets:
         {{- toYaml .Values.advertisedSubnets | nindent 8 }}
+    extraArgs:
+      rotate-server-certificates: true
   install:
     {{- (include "talm.discovered.disks_info" .) | nindent 4 }}
     disk: {{ include "talm.discovered.system_disk_name" . | quote }}
@@ -35,6 +37,10 @@ cluster:
     cni:
       name: none
     {{- end }}
+  {{- if .Values.cilium.enabled }}
+  proxy:
+    disabled: true
+  {{- end }}
   clusterName: "{{ .Chart.Name }}"
   controlPlane:
     endpoint: "{{ .Values.endpoint }}"
