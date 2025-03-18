@@ -258,7 +258,8 @@ jobs:
 
           cd pr
 
-          mapfile -t changed_charts < <(git diff --name-only main | grep -oP 'charts/\K[^/]+' | sort -u)
+          git fetch origin main
+          mapfile -t changed_charts < <(git diff --name-only origin/main | grep -oP 'charts/\K[^/]+' | sort -u)
 
           cd ..
 
@@ -360,6 +361,7 @@ jobs:
 
       - name: Publish lint results
         uses: peter-evans/create-or-update-comment@v4
+        if: steps.lint.outputs.result != '0'
         with:
           comment-id: ${{ steps.find-lint.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
