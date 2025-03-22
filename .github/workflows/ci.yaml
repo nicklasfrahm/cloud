@@ -495,5 +495,5 @@ jobs:
 
           for chart in "${changed_charts[@]}"; do
             helm package "charts/$chart"
-            helm push $chart-*.tgz oci://ghcr.io/nicklasfrahm/cloud/charts
+            helm push $chart-*.tgz oci://ghcr.io/nicklasfrahm/charts
           done
