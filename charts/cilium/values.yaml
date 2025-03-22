@@ -1,4 +1,45 @@
 cilium:
   enabled: true
+
+  # Allow running Cilium on a single node cluster.
   operator:
     replicas: 1
+
+  # Tune Cilium for deployment on Talos.
+  # Docs: https://www.talos.dev/v1.9/kubernetes-guides/network/deploying-cilium/#without-kube-proxy
+  k8sServiceHost: localhost
+  k8sServicePort: 7445
+
+  ipam:
+    mode: kubernetes
+
+  kubeProxyReplacement: true
+
+  securityContext:
+    capabilities:
+      ciliumAgent:
+        - CHOWN
+        - KILL
+        - NET_ADMIN
+        - NET_RAW
+        - IPC_LOCK
+        - SYS_ADMIN
+        - SYS_RESOURCE
+        - DAC_OVERRIDE
+        - FOWNER
+        - SETGID
+        - SETUID
+      cleanCiliumState:
+        - NET_ADMIN
+        - SYS_ADMIN
+        - SYS_RESOURCE
+
+  cgroup:
+    autoMount:
+      enabled: false
+    hostRoot: /sys/fs/cgroup
+
+  # Create a replacement for klipper-lb.
+  # Docs: https://docs.cilium.io/en/latest/network/node-ipam/
+  nodeIPAM:
+    enabled: true

@@ -277,7 +277,7 @@ jobs:
             fi
 
             # Build dependencies.
-            [[ -d  ! -f "$source/charts/$chart/Chart.lock" ]] && helm dependency build "$source/charts/$chart"
+            [[ ! -f "$source/charts/$chart/Chart.lock" ]] && helm dependency build "$source/charts/$chart"
 
             helm template release "$source/charts/$chart" >"$source.yaml"
           }
