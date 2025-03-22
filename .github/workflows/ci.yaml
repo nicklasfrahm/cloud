@@ -274,7 +274,7 @@ jobs:
             helm template release main/charts/$chart >main.yaml
             helm template release pr/charts/$chart >pr.yaml
 
-            if changes="$(diff -u main.yaml pr.yaml)"; then
+            if ! changes="$(diff -u main.yaml pr.yaml)"; then
               {
                 echo "<details>"
                 echo "<summary><code>helm template release charts/$chart</code></summary>"
