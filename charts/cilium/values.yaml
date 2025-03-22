@@ -1,0 +1,4 @@
+cilium:
+  enabled: true
+  operator:
+    replicas: 1
