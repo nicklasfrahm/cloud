@@ -458,3 +458,33 @@ jobs:
       - name: Fail on lint errors
         if: steps.lint.outputs.result != '0'
         run: exit 1
+
+  publish_charts:
+    name: Publish charts
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
+      - name: Publish charts
+        run: |
+          set -eou pipefail
+
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login --username ${{ github.actor }} --password-stdin
+
+          mapfile -t changed_charts < <(git diff --name-only HEAD~1 | grep -oP 'charts/\K[^/]+' | sort -u)
+
+          for chart in "${changed_charts[@]}"; do
+            helm package "charts/$chart"
+            helm push $chart-*.tgz oci://ghcr.io/nicklasfrahm/cloud/charts
+          done

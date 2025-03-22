@@ -43,6 +43,7 @@ go.work
 # Ignore the build directory.
 build/
 
-# Ignore chart dependencies and lock files.
+# Ignore chart dependencies, lock files and packaged charts.
 charts/**/charts/
 charts/*/Chart.lock
+*.tgz
