@@ -32,7 +32,8 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: "helm"
-    directory: "charts/"
+    directories:
+      - "/charts/*"
     schedule:
       interval: "weekly"
     commit-message:
