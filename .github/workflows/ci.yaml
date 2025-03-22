@@ -384,6 +384,10 @@ jobs:
         run: |
           set -eou pipefail
 
+          # Download dependencies and build lock files.
+          helm dep build pr/charts/*
+          helm dep build main/charts/*
+
           cd pr
 
           git fetch origin main
