@@ -271,8 +271,8 @@ jobs:
             [[ ! -f "main/charts/$chart/Chart.lock" ]] && helm dependency build main/charts/$chart
             [[ ! -f "pr/charts/$chart/Chart.lock" ]] && helm dependency build pr/charts/$chart
 
-            helm template release main/charts/$chart >main.yaml
-            helm template release pr/charts/$chart >pr.yaml
+            [[ -d "main/charts/$chart" ]] && helm template release main/charts/$chart >main.yaml || touch main.yaml
+            [[ -d "pr/charts/$chart" ]] && helm template release pr/charts/$chart >pr.yaml || touch pr.yaml
 
             if ! changes="$(diff -u main.yaml pr.yaml)"; then
               {
