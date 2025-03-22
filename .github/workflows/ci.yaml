@@ -358,6 +358,7 @@ jobs:
             # The version in the `Chart.yaml` file has been updated.
             if [[ "$main_version" != "$pr_version" ]]; then
               echo "| $chart | ✅ | $main_version | $pr_version |" >>pending.md
+              continue
             fi
 
             # The version in the `Chart.yaml` file has not been updated.
