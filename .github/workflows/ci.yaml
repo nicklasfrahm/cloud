@@ -407,6 +407,16 @@ jobs:
         run: |
           set -eou pipefail
 
+          cd pr
+
+          mapfile -t charts < <(find charts -mindepth 1 -maxdepth 1 -type d)
+
+          cd ..
+
+          for chart in "${charts[@]}"; do
+            [[ ! -f "pr/charts/$chart/Chart.lock" ]] && helm dependency build pr/charts/$chart
+          done
+
           if output=$(helm lint pr/charts/* --strict); then
             echo 'result=0' >>"$GITHUB_OUTPUT"
           else
