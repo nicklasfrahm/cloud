@@ -407,6 +407,16 @@ jobs:
         run: |
           set -eou pipefail
 
+          cd pr
+
+          mapfile -t charts < <(find charts -mindepth 1 -maxdepth 1 -type d)
+
+          cd ..
+
+          for chart in "${charts[@]}"; do
+            [[ ! -f "pr/$chart/Chart.lock" ]] && helm dependency build pr/$chart
+          done
+
           if output=$(helm lint pr/charts/* --strict); then
             echo 'result=0' >>"$GITHUB_OUTPUT"
           else
@@ -479,7 +489,7 @@ jobs:
         run: |
           set -eou pipefail
 
-          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login --username ${{ github.actor }} --password-stdin
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io --username ${{ github.actor }} --password-stdin
 
           mapfile -t changed_charts < <(git diff --name-only HEAD~1 | grep -oP 'charts/\K[^/]+' | sort -u)
 
