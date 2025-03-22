@@ -1,2 +1,4 @@
 wg-easy:
   enabled: true
+  image:
+    versionOverride: "14"

@@ -1,4 +1,5 @@
 version: 2
+enable-beta-ecosystems: true
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -28,5 +29,15 @@ updates:
       prefix: "fix(deps)"
     groups:
       gomodules:
+        patterns:
+          - "*"
+  - package-ecosystem: "helm"
+    directory: "charts/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "fix(deps)"
+    groups:
+      helm:
         patterns:
           - "*"
