@@ -3,7 +3,7 @@ type: application
 name: wireguard
 description: Deploy a WireGuard VPN server via wg-easy.
 icon: https://artifacthub.io/image/e01e3e85-4da3-4565-b40f-c5b9c0ff5d46
-version: 0.2.0
+version: 0.2.1
 appVersion: "14"
 dependencies:
   - repository: https://raw.githubusercontent.com/hansehe/wg-easy-helm/master/helm/charts
