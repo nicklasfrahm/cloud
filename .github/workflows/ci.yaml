@@ -285,7 +285,7 @@ jobs:
                 echo ""
                 echo "</details>"
                 echo ""
-              } >>diff.md
+              } >>changes.md
               changed+=1
             fi
           done
@@ -308,7 +308,7 @@ jobs:
 
       - name: Publish chart changes
         uses: peter-evans/create-or-update-comment@v4
-        if: steps.diff.outputs.changed != '0'
+        # if: steps.diff.outputs.changed != '0'
         with:
           comment-id: ${{ steps.find-diff.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -320,11 +320,11 @@ jobs:
             ${{ steps.diff.outputs.changes }}
           edit-mode: replace
 
-      - name: Delete diff comment
-        if: steps.diff.outputs.changed == '0' && steps.find-diff.outputs.comment-id != ''
-        run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-diff.outputs.comment-id }} -X DELETE
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Delete diff comment
+      #   if: steps.diff.outputs.changed == '0' && steps.find-diff.outputs.comment-id != ''
+      #   run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-diff.outputs.comment-id }} -X DELETE
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check for pending version updates
         id: version
