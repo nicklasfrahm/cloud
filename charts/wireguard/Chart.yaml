@@ -2,7 +2,7 @@ apiVersion: v2
 type: application
 name: wireguard
 description: Deploy a WireGuard VPN server via wg-easy.
-icon: https://play-lh.googleusercontent.com/tixGgVipnsaKeGQzykJfgSEhUc_YYMSsr3gwBuPTpXb2F1BKPVzv5OxfCrpS8OAXXh8
+icon: https://artifacthub.io/image/e01e3e85-4da3-4565-b40f-c5b9c0ff5d46
 version: 0.2.0
 appVersion: "14"
 dependencies:

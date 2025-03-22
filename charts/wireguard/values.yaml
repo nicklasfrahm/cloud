@@ -2,3 +2,11 @@ wg-easy:
   enabled: true
   image:
     versionOverride: "14"
+
+  # TODO: Submit an upstream PR to place these in secret
+  # instead of directly in the deployment.
+  environmentVariables:
+    # WAN IP or a Dynamic DNS hostname.
+    WG_HOST: CHANGE_ME
+    # Password for the UI.
+    PASSWORD: CHANGE_ME
