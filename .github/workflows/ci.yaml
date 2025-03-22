@@ -398,7 +398,7 @@ jobs:
             main="$(helm template release main/charts/$chart)"
             pr="$(helm template release pr/charts/$chart)"
 
-            if changes=$(diff -u <(echo "$main") <(echo "$pr"); then
+            if changes=$(diff -u <(echo "$main") <(echo "$pr")); then
               {
                 echo "<details>"
                 echo "<summary><code>helm template release charts/$chart</code></summary>"
