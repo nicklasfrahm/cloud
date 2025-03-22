@@ -414,7 +414,7 @@ jobs:
           cd ..
 
           for chart in "${charts[@]}"; do
-            [[ ! -f "pr/charts/$chart/Chart.lock" ]] && helm dependency build pr/charts/$chart
+            [[ ! -f "pr/$chart/Chart.lock" ]] && helm dependency build pr/$chart
           done
 
           if output=$(helm lint pr/charts/* --strict); then
