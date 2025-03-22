@@ -266,13 +266,25 @@ jobs:
           changed=0
           touch changes.md
 
-          for chart in "${changed_charts[@]}"; do
-            # Build dependencies.
-            [[ ! -f "main/charts/$chart/Chart.lock" ]] && helm dependency build main/charts/$chart
-            [[ ! -f "pr/charts/$chart/Chart.lock" ]] && helm dependency build pr/charts/$chart
+          template () {
+            source="$1"
+            chart="$2"
 
-            helm template release main/charts/$chart >main.yaml
-            helm template release pr/charts/$chart >pr.yaml
+            # If the chart never existed or was deleted, create an empty file.
+            if [[ ! -d "$source/charts/$chart" ]]; then
+              touch "$source.yaml"
+              return
+            fi
+
+            # Build dependencies.
+            [[ ! -f "$source/charts/$chart/Chart.lock" ]] && helm dependency build "$source/charts/$chart"
+
+            helm template release "$source/charts/$chart" >"$source.yaml"
+          }
+
+          for chart in "${changed_charts[@]}"; do
+            template main "$chart"
+            template pr "$chart"
 
             if ! changes="$(diff -u main.yaml pr.yaml)"; then
               {
