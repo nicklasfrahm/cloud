@@ -271,10 +271,10 @@ jobs:
             [[ ! -f "main/charts/$chart/Chart.lock" ]] && helm dependency build main/charts/$chart
             [[ ! -f "pr/charts/$chart/Chart.lock" ]] && helm dependency build pr/charts/$chart
 
-            main="$(helm template release main/charts/$chart)"
-            pr="$(helm template release pr/charts/$chart)"
+            helm template release main/charts/$chart >main.yaml
+            helm template release pr/charts/$chart >pr.yaml
 
-            if changes=$(diff -u <(echo "$main") <(echo "$pr")); then
+            if changes="$(diff -u main.yaml pr.yaml)"; then
               {
                 echo "<details>"
                 echo "<summary><code>helm template release charts/$chart</code></summary>"
