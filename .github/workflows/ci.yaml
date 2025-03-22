@@ -479,7 +479,7 @@ jobs:
         run: |
           set -eou pipefail
 
-          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login --username ${{ github.actor }} --password-stdin
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io --username ${{ github.actor }} --password-stdin
 
           mapfile -t changed_charts < <(git diff --name-only HEAD~1 | grep -oP 'charts/\K[^/]+' | sort -u)
 
