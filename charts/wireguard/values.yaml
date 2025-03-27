@@ -12,3 +12,11 @@ wg-easy:
     WG_HOST: CHANGE_ME
     # Password for the UI.
     PASSWORD: CHANGE_ME
+
+  ingress:
+    enabled: true
+    hosts:
+      - host: CHANGE_ME
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
