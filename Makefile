@@ -323,13 +323,17 @@ catalog-build: opm ## Build a catalog image.
 catalog-push: ## Push a catalog image.
 	$(MAKE) docker-push IMG=$(CATALOG_IMG)
 
-.PHONY: plan
-plan: ## Plan the infrastructure changes.
-	tofu -chdir=deploy/tofu init
-	tofu -chdir=deploy/tofu plan | tee tofu.log
+.PHONY: opentofu-plan
+opentofu-plan: ## Plan the infrastructure changes.
+	tofu -chdir=deploy/opentofu init
+	tofu -chdir=deploy/opentofu plan -out=opentofu.tfplan | tee tofu.log
 	@sed -i 's/\x1b\[[0-9;]*m//g' tofu.log
 
-.PHONY: apply
-apply: ## Apply the infrastructure changes.
-	tofu -chdir=deploy/tofu init
-	tofu -chdir=deploy/tofu apply -auto-approve
+.PHONY: opentofu-apply
+opentofu-apply: ## Apply the infrastructure changes.
+	tofu -chdir=deploy/opentofu init
+	tofu -chdir=deploy/opentofu apply -auto-approve
+
+.PHONY: opentofu-count-changes
+opentofu-count-changes: ## Count the number of changes in the plan.
+	@tofu -chdir=deploy/opentofu show -json opentofu.tfplan | jq -r '.resource_changes | length'

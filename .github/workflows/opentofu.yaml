@@ -1,0 +1,110 @@
+name: OpenTofu
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "deploy/opentofu/**"
+      - ".github/workflows/opentofu.yaml"
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "deploy/opentofu/**"
+      - ".github/workflows/opentofu.yaml"
+  workflow_dispatch:
+
+jobs:
+  plan:
+    name: Plan
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main'
+    permissions:
+      id-token: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.GOOGLE_PROJECT }}
+          service_account: ${{ vars.GOOGLE_SERVICE_ACCOUNT }}
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+
+      - name: Plan changes
+        run: make plan
+
+      - name: Dump OpenTofu plan
+        id: dump
+        run: |
+          set -eou pipefail
+
+          {
+            echo 'plan<<EOF'
+            cat tofu.log
+            echo EOF
+          } >>"$GITHUB_OUTPUT"
+
+          echo "changes=$(make opentofu-count-changes)" >>"$GITHUB_OUTPUT"
+
+      - name: Find plan comment
+        uses: peter-evans/find-comment@v3
+        id: find-dump
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "OpenTofu plan"
+
+      - name: Publish plan
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find-dump.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## 🏗️ [OpenTofu plan](https://opentofu.org)
+
+            The following changes were detected in the OpenTofu plan:
+
+            <details>
+            <summary><code>make plan</code></summary>
+
+            ```tf
+            ${{ steps.dump.outputs.plan }}
+            ```
+            </details>
+          edit-mode: replace
+
+      # - name: Delete plan comment
+      #   if: steps.dump.outputs.changes == '0' && steps.find-dump.outputs.comment-id != ''
+      #   run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-dump.outputs.comment-id }} -X DELETE
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  apply:
+    name: Apply
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.GOOGLE_PROJECT }}
+          service_account: ${{ vars.GOOGLE_SERVICE_ACCOUNT }}
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+
+      - name: Apply changes
+        run: make apply
