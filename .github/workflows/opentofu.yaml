@@ -51,7 +51,7 @@ jobs:
             echo EOF
           } >>"$GITHUB_OUTPUT"
 
-          echo "changes=$(make opentofu-count-changes)" >>"$GITHUB_OUTPUT"
+          echo "changes=$(make opentofu-count)" >>"$GITHUB_OUTPUT"
 
       - name: Find plan comment
         uses: peter-evans/find-comment@v3
@@ -77,6 +77,7 @@ jobs:
             ```tf
             ${{ steps.dump.outputs.plan }}
             ```
+
             </details>
           edit-mode: replace
 
