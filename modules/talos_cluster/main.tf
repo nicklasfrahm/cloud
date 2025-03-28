@@ -13,7 +13,7 @@ resource "random_id" "this" {
 }
 
 # Create a file with the Talos version.
-resource "local_file" "version" {
-  filename = "${path.cwd}/deploy/tofu/out/${local.name}"
-  content = "${local.talos_version}/${random_id.this.hex}"
-}
+# resource "local_file" "version" {
+#   filename = "${path.cwd}/deploy/tofu/out/${local.name}"
+#   content = "${local.talos_version}/${random_id.this.hex}"
+# }

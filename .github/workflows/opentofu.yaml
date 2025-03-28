@@ -83,11 +83,11 @@ jobs:
             </details>
           edit-mode: replace
 
-      # - name: Delete plan comment
-      #   if: steps.opentofu.outputs.changes == '0' && steps.find-opentofu.outputs.comment-id != ''
-      #   run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-opentofu.outputs.comment-id }} -X DELETE
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Delete plan comment
+        if: steps.opentofu.outputs.changes == '0' && steps.find-opentofu.outputs.comment-id != ''
+        run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-opentofu.outputs.comment-id }} -X DELETE
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   apply:
     name: Apply
