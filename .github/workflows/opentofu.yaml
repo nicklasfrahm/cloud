@@ -37,11 +37,11 @@ jobs:
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v1
 
-      - name: Plan changes
-        run: make plan
+      - name: Plan OpenTofu changes
+        run: make opentofu-plan
 
       - name: Dump OpenTofu plan
-        id: dump
+        id: opentofu
         run: |
           set -eou pipefail
 
@@ -55,7 +55,7 @@ jobs:
 
       - name: Find plan comment
         uses: peter-evans/find-comment@v3
-        id: find-dump
+        id: find-opentofu
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: "github-actions[bot]"
@@ -64,7 +64,7 @@ jobs:
       - name: Publish plan
         uses: peter-evans/create-or-update-comment@v4
         with:
-          comment-id: ${{ steps.find-dump.outputs.comment-id }}
+          comment-id: ${{ steps.find-opentofu.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             ## 🏗️ [OpenTofu plan](https://opentofu.org)
@@ -75,15 +75,15 @@ jobs:
             <summary><code>make plan</code></summary>
 
             ```tf
-            ${{ steps.dump.outputs.plan }}
+            ${{ steps.opentofu.outputs.plan }}
             ```
 
             </details>
           edit-mode: replace
 
       # - name: Delete plan comment
-      #   if: steps.dump.outputs.changes == '0' && steps.find-dump.outputs.comment-id != ''
-      #   run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-dump.outputs.comment-id }} -X DELETE
+      #   if: steps.opentofu.outputs.changes == '0' && steps.find-opentofu.outputs.comment-id != ''
+      #   run: gh api /repos/${{ github.repository }}/issues/comments/${{ steps.find-opentofu.outputs.comment-id }} -X DELETE
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
