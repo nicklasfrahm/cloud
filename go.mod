@@ -2,7 +2,7 @@ module github.com/nicklasfrahm/cloud
 
 go 1.23.0
 
-toolchain go1.23.3
+toolchain go1.24.1
 
 require (
 	github.com/onsi/ginkgo/v2 v2.23.3
@@ -13,7 +13,7 @@ require (
 	k8s.io/cli-runtime v0.32.3
 	k8s.io/client-go v0.32.3
 	k8s.io/kubectl v0.32.3
-	sigs.k8s.io/controller-runtime v0.20.3
+	sigs.k8s.io/controller-runtime v0.20.4
 )
 
 require (
