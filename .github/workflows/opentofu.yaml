@@ -69,10 +69,12 @@ jobs:
           body: |
             ## 🏗️ [OpenTofu plan](https://opentofu.org)
 
-            The following changes were detected in the OpenTofu plan:
+            Changes were detected in the OpenTofu plan. Please review the changes below.
 
             <details>
-            <summary><code>make plan</code></summary>
+            <summary>
+            <code>make opentofu-plan</code>
+            </summary>
 
             ```tf
             ${{ steps.opentofu.outputs.plan }}
@@ -107,5 +109,5 @@ jobs:
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v1
 
-      - name: Apply changes
-        run: make apply
+      - name: Apply OpenTofu changes
+        run: make opentofu-apply
