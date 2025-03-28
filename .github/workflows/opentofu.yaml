@@ -10,9 +10,6 @@ on:
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - "deploy/opentofu/**"
-      - ".github/workflows/opentofu.yaml"
   workflow_dispatch:
 
 jobs:

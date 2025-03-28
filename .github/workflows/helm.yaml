@@ -10,9 +10,7 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - "charts/**"
-      - ".github/workflows/helm.yaml"
+  workflow_dispatch:
 
 jobs:
   check_charts:
