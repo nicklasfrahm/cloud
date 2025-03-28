@@ -12,7 +12,9 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: "terraform"
-    directory: "/deploy/tofu"
+    directories:
+      - "/modules/*"
+      - "/deploy/opentofu/*"
     schedule:
       interval: "weekly"
     commit-message:

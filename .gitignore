@@ -1,7 +1,7 @@
 # Ignore files related to Terraform.
 **/.terraform/
 **/.terraform.lock.hcl
-deploy/tofu/out/
+**/*.tfplan
 
 # Ignore log files.
 *.log
