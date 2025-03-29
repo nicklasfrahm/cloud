@@ -1,19 +1,39 @@
 locals {
-  name = var.region.metadata.name
-  talos_version = yamldecode(file("${path.cwd}/config.yaml")).talos.version
+  patch_dir = "${path.module}/patches"
 }
 
 # Create the Talos secret bundle.
-resource "talos_machine_secrets" "this" {
-  talos_version = local.talos_version
+resource "talos_machine_secrets" "secret_bundle" {
+  talos_version = var.global_config.talos.version
 }
 
-resource "random_id" "this" {
-  byte_length = 8
+locals {
+  // TODO: Use the IP address of the node.
+  cluster_endpoint = var.config.spec.infrastructure.loadBalancer.host ? "https://${var.config.spec.infrastructure.loadBalancer.host}:${var.config.spec.infrastructure.loadBalancer.port}" : "https://${var.region.metadata.name}:6443"
 }
 
-# Create a file with the Talos version.
-# resource "local_file" "version" {
-#   filename = "${path.cwd}/deploy/tofu/out/${local.name}"
-#   content = "${local.talos_version}/${random_id.this.hex}"
-# }
+# Define the controlplane configuration.
+data "talos_machine_configuration" "controlplane" {
+  cluster_name = var.config.metadata.name
+  cluster_endpoint = local.cluster_endpoint
+  machine_type = "controlplane"
+  machine_secrets = talos_machine_secrets.this.secrets
+
+  config_patches = [
+    yamldecode(templatefile("${local.patch_dir}/cilium.yaml", {
+      cilium_operator_replicas = length(var.config.spec.infrastructure.controlplanes) > 1 ? 2 : 1
+    })),
+    yamldecode(templatefile("${local.patch_dir}/scheduling.yaml", {
+      allow_scheduling_on_control_planes = length(var.config.spec.infrastructure.workers) > 0 ? "false" : "true"
+    })),
+    // TODO: Add more patches as needed.
+  ]
+}
+
+# Define the controlplane configuration.
+data "talos_machine_configuration" "worker" {
+  cluster_name = var.config.metadata.name
+  cluster_endpoint = local.cluster_endpoint
+  machine_type = "controlplane"
+  machine_secrets = talos_machine_secrets.this.secrets
+}

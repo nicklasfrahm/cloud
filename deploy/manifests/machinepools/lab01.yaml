@@ -1,8 +1,0 @@
-apiVersion: cloud.nicklasfrahm.dev/v1beta1
-kind: MachinePool
-metadata:
-  name: lab01
-spec:
-  selector:
-    matchLabels:
-      cloud.nicklasfrahm.dev/machinepool: "lab01"
