@@ -1,4 +1,5 @@
 cluster:
+  allowSchedulingOnControlPlanes: ${allow_scheduling_on_control_planes}
   network:
     # Disable the default CNI.
     cni:

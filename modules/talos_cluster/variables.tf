@@ -5,6 +5,12 @@ variable "global_config" {
     talos = object({
       version = string
     })
+    kubernetes = object({
+      version = string
+    })
+    dns = object({
+      zone = string
+    })
   })
 }
 
@@ -41,10 +47,13 @@ variable "config" {
             name = string
           })
         )
-        workers = list(
-          object({
-            name = string
-          })
+        workers = optional(
+          list(
+            object({
+              name = string
+            })
+          ),
+          []
         )
       })
     })

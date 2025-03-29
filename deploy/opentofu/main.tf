@@ -27,5 +27,5 @@ module "talos_cluster" {
   global_config = local.global_config
   machines = local.machines_configs
 
-  config = each.value
+  config = local.taloscluster_configs[each.key]
 }
