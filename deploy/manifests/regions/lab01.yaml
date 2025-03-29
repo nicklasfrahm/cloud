@@ -1,9 +1,0 @@
-apiVersion: cloud.nicklasfrahm.dev/v1beta1
-kind: Region
-metadata:
-  name: lab01
-spec:
-  provider: Baremetal
-  baremetal:
-    controlplanes:
-      - name: ant

@@ -2,3 +2,12 @@ talos:
   # Configure the desired version of Talos.
   # Reference: https://github.com/siderolabs/talos/releases/latest
   version: v1.9.3
+
+kubernetes:
+  # Configure the desired Kubernetes version.
+  # Reference: https://endoflife.date/kubernetes
+  version: v1.30.11
+
+dns:
+  # Configure the DNS zone for all infrastructure.
+  zone: "nicklasfrahm.dev"
