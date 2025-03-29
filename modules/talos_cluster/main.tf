@@ -5,13 +5,13 @@ locals {
   controlplane_names = [ for controlplane in var.config.spec.infrastructure.controlplanes : controlplane.name ]
   controlplane_machines = {
     for machine in var.machines :
-    machine.metadata.name => machine if contains(local.controlplane_names, machine.metadata.name)
+    "${machine.metadata.name}.${var.global_config.dns.zone}" => machine if contains(local.controlplane_names, machine.metadata.name)
   }
 
   worker_names = [ for worker in var.config.spec.infrastructure.workers : worker.name ]
   worker_machines = {
     for machine in var.machines :
-    machine.metadata.name => machine if contains(local.worker_names, machine.metadata.name)
+    "${machine.metadata.name}.${var.global_config.dns.zone}" => machine if contains(local.worker_names, machine.metadata.name)
   }
 
   # Determine the cluster endpoint based on the load balancer configuration.
@@ -31,42 +31,91 @@ locals {
   ]
 }
 
-# Create the Talos secret bundle.
 resource "talos_machine_secrets" "secret_bundle" {
   talos_version = var.global_config.talos.version
 }
 
-# Create Talos client configuration.
 data "talos_client_configuration" "this" {
   cluster_name = local.cluster_name
   client_configuration = talos_machine_secrets.secret_bundle.client_configuration
+  nodes = concat(
+    keys(local.controlplane_machines),
+    keys(local.worker_machines)
+  )
 }
 
-moved {
-  from = talos_machine_secrets.this
-  to = talos_machine_secrets.secret_bundle
-}
-
-# Define the controlplane configuration.
 data "talos_machine_configuration" "controlplane" {
   cluster_name = local.cluster_name
   cluster_endpoint = local.cluster_endpoint
   machine_type = "controlplane"
   machine_secrets = talos_machine_secrets.secret_bundle.machine_secrets
 
-  config_patches = local.config_patches
+  config_patches =  concat(local.config_patches, [
+    yamlencode({
+      machine = {
+        network = {
+          hostname = each.key
+        }
+      }
+    })
+  ])
 
   for_each = local.controlplane_machines
 }
 
-# Define the controlplane configuration.
 data "talos_machine_configuration" "worker" {
   cluster_name = local.cluster_name
   cluster_endpoint = local.cluster_endpoint
   machine_type = "worker"
   machine_secrets = talos_machine_secrets.secret_bundle.machine_secrets
 
-  config_patches = local.config_patches
+  config_patches = concat(local.config_patches, [
+    yamlencode({
+      machine = {
+        network = {
+          hostname = each.key
+        }
+      }
+    })
+  ])
 
   for_each = local.worker_machines
+}
+
+resource "talos_machine_configuration_apply" "controlplane" {
+  client_configuration = data.talos_client_configuration.this.client_configuration
+  machine_configuration_input = data.talos_machine_configuration.controlplane[each.key].machine_configuration
+  node = each.key
+
+  for_each = local.controlplane_machines
+}
+
+resource "talos_machine_configuration_apply" "worker" {
+  client_configuration = data.talos_client_configuration.this.client_configuration
+  machine_configuration_input = data.talos_machine_configuration.worker[each.key].machine_configuration
+  node = each.key
+
+  for_each = local.worker_machines
+}
+
+resource "talos_machine_bootstrap" "controlplane" {
+  client_configuration = data.talos_client_configuration.this.client_configuration
+  node = each.key
+
+  for_each = local.controlplane_machines
+
+  depends_on = [
+    talos_machine_configuration_apply.controlplane,
+  ]
+}
+
+resource "talos_machine_bootstrap" "worker" {
+  client_configuration = data.talos_client_configuration.this.client_configuration
+  node = each.key
+
+  for_each = local.worker_machines
+
+  depends_on = [
+    talos_machine_configuration_apply.worker,
+  ]
 }

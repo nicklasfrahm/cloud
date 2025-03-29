@@ -1,6 +1,11 @@
 cluster:
   allowSchedulingOnControlPlanes: ${allow_scheduling_on_control_planes}
   network:
+    # Configure Pod and Service CIDR ranges.
+    podSubnets:
+      - 172.31.0.0/16
+    serviceSubnets:
+      - 172.30.0.0/16
     # Disable the default CNI.
     cni:
       name: none

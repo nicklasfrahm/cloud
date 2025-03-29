@@ -29,7 +29,6 @@ variable "machines" {
   )
 }
 
-# The configuration of the cluster.
 variable "config" {
   description = "The configuration of the cluster."
   type = object({
