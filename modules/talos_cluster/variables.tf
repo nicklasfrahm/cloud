@@ -37,10 +37,16 @@ variable "config" {
     })
     spec = object({
       infrastructure = object({
-        loadBalancer = object({
-          host = optional(string, "")
-          port = optional(number, 6443)
-        })
+        loadBalancer = optional(
+          object({
+            host = optional(string, "")
+            port = optional(number, 6443)
+          }),
+          {
+            host = ""
+            port = 6443
+          }
+        )
         controlplanes = list(
           object({
             name = string

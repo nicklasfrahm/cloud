@@ -1,0 +1,8 @@
+apiVersion: cloud.nicklasfrahm.dev/v1
+kind: TalosCluster
+metadata:
+  name: lab01
+spec:
+  infrastructure:
+    controlplanes:
+      - name: antelope
