@@ -1,0 +1,18 @@
+{{- if len .Values.global.clusterAdmins | ne 0 }}
+apiVersion: v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "authz.name" . }}-cluster-admin
+  labels:
+    {{- include "authz.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+{{- range .Values.global.clusterAdmins }}
+  - kind: User
+    name: {{ . | quote }}
+    apiGroup: rbac.authorization.k8s.io
+{{- end }}
+{{- end }}

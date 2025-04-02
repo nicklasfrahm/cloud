@@ -1,0 +1,4 @@
+Successfully configured admin access for the following users:
+{{ range $user := .Values.adminUsers }}
+- {{ $user.email }}
+{{- end }}

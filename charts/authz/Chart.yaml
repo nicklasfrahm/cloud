@@ -1,0 +1,7 @@
+apiVersion: v2
+type: application
+name: authz
+description: Configure roles within the Kubernetes cluster.
+icon: https://raw.githubusercontent.com/kubernetes/community/refs/heads/master/icons/png/resources/labeled/sa-256.png
+version: 0.1.0
+appVersion: "0.1.0"
