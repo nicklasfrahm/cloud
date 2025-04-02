@@ -51,7 +51,7 @@ provider "helm" {
 resource "helm_release" "authz" {
   name      = "authz"
   namespace = "kube-system"
-  chart     = "ghcr.io/nicklasfrahm/charts/authz"
+  chart     = "oci://ghcr.io/nicklasfrahm/charts/authz"
   version   = "0.1.0"
   atomic    = true
 
