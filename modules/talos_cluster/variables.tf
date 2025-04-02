@@ -6,7 +6,11 @@ variable "global_config" {
       version = string
     })
     kubernetes = object({
-      version = string
+      version = string,
+      oidc = object({
+        issuer_url = string
+        client_id  = string
+      })
     })
     dns = object({
       zone = string
@@ -29,7 +33,6 @@ variable "machines" {
   )
 }
 
-# The configuration of the cluster.
 variable "config" {
   description = "The configuration of the cluster."
   type = object({
@@ -38,10 +41,16 @@ variable "config" {
     })
     spec = object({
       infrastructure = object({
-        loadBalancer = object({
-          host = optional(string, "")
-          port = optional(number, 6443)
-        })
+        loadBalancer = optional(
+          object({
+            host = optional(string, "")
+            port = optional(number, 6443)
+          }),
+          {
+            host = ""
+            port = 6443
+          }
+        )
         controlplanes = list(
           object({
             name = string

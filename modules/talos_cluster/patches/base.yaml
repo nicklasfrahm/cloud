@@ -1,6 +1,17 @@
 cluster:
   allowSchedulingOnControlPlanes: ${allow_scheduling_on_control_planes}
+  # Enable OIDC authentication.
+  apiServer:
+    extraArgs:
+      oidc-issuer-url: ${oidc_issuer_url}
+      oidc-client-id: ${oidc_client_id}
+      oidc-username-claim: email
   network:
+    # Configure Pod and Service CIDR ranges.
+    podSubnets:
+      - 172.31.0.0/16
+    serviceSubnets:
+      - 172.30.0.0/16
     # Disable the default CNI.
     cni:
       name: none

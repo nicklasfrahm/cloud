@@ -34,7 +34,6 @@ that can be served by a web server.`,
 
 			schemas := map[string]ResourceLoader{
 				"machines": Load(&repository.Machines.Items),
-				"machinepools": Load(&repository.MachinePools.Items),
 			}
 
 			for schema, load := range schemas {
@@ -57,11 +56,9 @@ that can be served by a web server.`,
 	return cmd
 }
 
-
 // ConfigRepository is a configuration repository.
 type ConfigRepository struct {
 	Machines cloud.MachineList
-	MachinePools cloud.MachinePoolList
 }
 
 // NewConfigRepository creates a new configuration repository.
@@ -69,9 +66,6 @@ func NewConfigRepository() *ConfigRepository {
 	return &ConfigRepository{
 		Machines: cloud.MachineList{
 			Items: []cloud.Machine{},
-		},
-		MachinePools: cloud.MachinePoolList{
-			Items: []cloud.MachinePool{},
 		},
 	}
 }
@@ -171,7 +165,6 @@ func (r *ConfigRepository) Build(dstDir string) error {
 
 	schemas := map[string]ResourceBuilder{
 		"machines": BuildAll(&r.Machines, ToPointerSlice(r.Machines.Items)),
-		"machinepools": BuildAll(&r.MachinePools, ToPointerSlice(r.MachinePools.Items)),
 	}
 
 	for schema, build := range schemas {
@@ -203,7 +196,7 @@ func BuildAll[T runtime.Object, U CRD](list T, items []U) ResourceBuilder {
 		}
 
 		for _, item := range items {
-			machineFile := path.Join(dstDir, schema, item.GetObjectMeta().GetName() +".json")
+			machineFile := path.Join(dstDir, schema, item.GetObjectMeta().GetName()+".json")
 			if err := Build(machineFile, item); err != nil {
 				return fmt.Errorf("failed to build schema: %w", err)
 			}

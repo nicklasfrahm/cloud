@@ -1,0 +1,10 @@
+{{- if .Values.global.admins.users }}
+Successfully configured admin access for the following users:
+{{ range $user := .Values.adminUsers }}
+- {{ $user.email }}
+{{- end }}
+{{- else }}
+You have not configured any admin users. Please
+add admin users to the `global.adminUsers` list
+in your `values.yaml` file.
+{{- end }}

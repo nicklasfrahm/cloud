@@ -1,0 +1,10 @@
+apiVersion: cloud.nicklasfrahm.dev/v1
+kind: Machine
+metadata:
+  name: antelope
+spec:
+  hardware:
+    vendor: "Hetzner"
+    model: "CX22"
+  interfaces:
+    - mac: "96:00:04:2e:63:8a"

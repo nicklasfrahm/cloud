@@ -47,3 +47,7 @@ build/
 charts/**/charts/
 charts/*/Chart.lock
 *.tgz
+
+# Kubernetes credentials.
+kubeconfig.yaml
+kubeconfig.yml
