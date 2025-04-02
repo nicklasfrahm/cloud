@@ -9,7 +9,7 @@ variable "global_config" {
       version = string,
       oidc = object({
         issuer_url = string
-        client_id = string
+        client_id  = string
       })
     })
     dns = object({
