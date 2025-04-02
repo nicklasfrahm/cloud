@@ -58,9 +58,11 @@ resource "helm_release" "authz" {
   values = [
     yamlencode({
       global = {
-        clusterAdmins = [
-          for admin in local.global_config.kubernetes.admins : admin.email
-        ]
+        admins = {
+          users = [
+            for admin in local.global_config.kubernetes.admins : admin.email
+          ]
+        }
       }
     })
   ]
