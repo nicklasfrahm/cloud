@@ -7,6 +7,11 @@ kubernetes:
   # Configure the desired Kubernetes version.
   # Reference: https://endoflife.date/kubernetes
   version: v1.30.11
+  oidc:
+    issuer_url: https://nicklasfrahm.eu.auth0.com/
+    client_id: Xxy6PZe1WmCFcIwNLNw5XXXlxGJ8YWAP
+  admins:
+    - email: nicklas.frahm@gmail.com
 
 dns:
   # Configure the DNS zone for all infrastructure.

@@ -26,6 +26,8 @@ locals {
     templatefile("${local.patch_dir}/base.yaml", {
       cilium_operator_replicas = length(local.controlplane_names) > 1 ? 2 : 1,
       allow_scheduling_on_control_planes = length(local.worker_names) > 0 ? "false" : "true",
+      oidc_issuer_url = var.global_config.kubernetes.oidc.issuer_url,
+      oidc_client_id = var.global_config.kubernetes.oidc.client_id,
     }),
     // TODO: Add more patches as needed.
   ]
@@ -118,4 +120,55 @@ resource "talos_machine_bootstrap" "worker" {
   depends_on = [
     talos_machine_configuration_apply.worker,
   ]
+}
+
+resource "talos_cluster_kubeconfig" "this" {
+  depends_on = [
+    talos_machine_bootstrap.controlplane,
+  ]
+  client_configuration = talos_machine_secrets.secret_bundle.client_configuration
+  node                 = "${local.controlplane_names[0]}.${var.global_config.dns.zone}"
+}
+
+locals {
+  kubeconfig = yamlencode({
+    apiVersion = "v1"
+    kind = "Config"
+    clusters = [
+      {
+        name = local.cluster_name
+        cluster = {
+          server = local.cluster_endpoint
+          certificate-authority-data = talos_cluster_kubeconfig.this.kubernetes_client_configuration.ca_certificate
+        }
+      }
+    ]
+    contexts = [
+      {
+        name = "oidc@${local.cluster_name}"
+        context = {
+          cluster = local.cluster_name
+          user = "oidc"
+        }
+      }
+    ]
+    current-context = "oidc@${local.cluster_name}"
+    preferences = {}
+    users = [
+      {
+        name = "oidc"
+        user = {
+          exec = {
+            apiVersion = "client.authentication.k8s.io/v1"
+            command = "kubelogin"
+            args = [
+              "get-token",
+              "--oidc-issuer-url=${var.global_config.kubernetes.oidc.issuer_url}",
+              "--oidc-client-id=${var.global_config.kubernetes.oidc.client_id}",
+            ]
+          }
+        }
+      }
+    ]
+  })
 }

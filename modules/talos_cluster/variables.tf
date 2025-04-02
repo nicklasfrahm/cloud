@@ -6,7 +6,11 @@ variable "global_config" {
       version = string
     })
     kubernetes = object({
-      version = string
+      version = string,
+      oidc = object({
+        issuer_url = string
+        client_id = string
+      })
     })
     dns = object({
       zone = string

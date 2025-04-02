@@ -29,3 +29,12 @@ module "talos_cluster" {
 
   config = local.taloscluster_configs[each.key]
 }
+
+output "kubeconfigs" {
+  description = "A map of kubeconfigs for each cluster."
+  depends_on = [ module.talos_cluster ]
+  value = {
+    for cluster in local.taloscluster_configs :
+    cluster.metadata.name => module.talos_cluster[cluster.metadata.name].kubeconfig != null ? module.talos_cluster[cluster.metadata.name].kubeconfig : ""
+  }
+}
