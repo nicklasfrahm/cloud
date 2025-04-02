@@ -48,20 +48,20 @@ provider "helm" {
   }
 }
 
-# resource "helm_release" "authz" {
-#   name      = "authz"
-#   namespace = "kube-system"
-#   # CHANGE THIS TO THE RELEASED CHART.
-#   chart     = "${path.cwd}/charts/authz"
-#   atomic    = true
+resource "helm_release" "authz" {
+  name      = "authz"
+  namespace = "kube-system"
+  chart     = "ghcr.io/nicklasfrahm/charts/authz"
+  version   = "0.1.0"
+  atomic    = true
 
-#   values = [
-#     yamlencode({
-#       global = {
-#         clusterAdmins = [
-#           for admin in local.global_config.kubernetes.admins : admin.email
-#         ]
-#       }
-#     })
-#   ]
-# }
+  values = [
+    yamlencode({
+      global = {
+        clusterAdmins = [
+          for admin in local.global_config.kubernetes.admins : admin.email
+        ]
+      }
+    })
+  ]
+}
