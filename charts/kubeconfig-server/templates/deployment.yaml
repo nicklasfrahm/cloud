@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kubeconfig-server.fullname" . }}
+  labels:
+    {{- include "kubeconfig-server.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "kubeconfig-server.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "kubeconfig-server.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        runAsUser: 101
+        runAsGroup: 101
+        fsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+              - ALL
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 20
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d
+              readOnly: true
+            - name: index-html
+              mountPath: /usr/share/nginx/html
+              readOnly: true
+            - name: kubeconfig
+              mountPath: /usr/share/nginx/html/kubeconfig
+              subPath: kubeconfig
+              readOnly: true
+            - name: tmp-dir
+              mountPath: /tmp
+            - name: var-cache-nginx
+              mountPath: /var/cache/nginx
+            - name: var-run
+              mountPath: /var/run
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: {{ include "kubeconfig-server.fullname" . }}-nginx-config
+        - name: index-html
+          configMap:
+            name: {{ include "kubeconfig-server.fullname" . }}-index-html
+        - name: kubeconfig
+          secret:
+            {{- if .Values.kubeconfig.existingSecret }}
+            secretName: {{ .Values.kubeconfig.existingSecret }}
+            {{- else }}
+            secretName: {{ include "kubeconfig-server.fullname" . }}-kubeconfig
+            {{- end }}
+            items:
+              - key: {{ .Values.kubeconfig.existingSecretKey | default "kubeconfig" }}
+                path: kubeconfig
+        - name: tmp-dir
+          emptyDir: {}
+        - name: var-cache-nginx
+          emptyDir: {}
+        - name: var-run
+          emptyDir: {}
