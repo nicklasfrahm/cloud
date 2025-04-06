@@ -13,7 +13,9 @@ service:
 
 kubeconfig:
   # Base64 encoded kubeconfig content
-  content: ""
+  content: |
+    # This is a placeholder for the kubeconfig content.
+    # REPLACE THIS BUT DO NOT INCLUDE SENSITIVE DATA HERE.
   # Or reference a secret
   existingSecret: ""
   existingSecretKey: "kubeconfig"
