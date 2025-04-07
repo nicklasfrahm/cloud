@@ -43,6 +43,7 @@ cilium:
   # Docs: https://docs.cilium.io/en/latest/network/node-ipam/
   nodeIPAM:
     enabled: true
+  defaultLBServiceIPAM: nodeipam
 
   # Enable support for ingress.
   ingressController:
