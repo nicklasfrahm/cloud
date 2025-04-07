@@ -43,3 +43,9 @@ cilium:
   # Docs: https://docs.cilium.io/en/latest/network/node-ipam/
   nodeIPAM:
     enabled: true
+
+  # Enable support for ingress.
+  ingressController:
+    enabled: true
+    loadbalancerMode: shared
+    default: true
