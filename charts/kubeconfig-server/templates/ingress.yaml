@@ -1,6 +1,6 @@
-{{- if .Values.ingress.enabled -}}
-{{- $fullName := include "kubeconfig-server.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
+{{- if .Values.ingress.enabled }}
+{{- $fullName := include "kubeconfig-server.fullname" . }}
+{{- $svcPort := .Values.service.port }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -33,7 +33,7 @@ spec:
     {{- range $host := .Values.ingress.hosts }}
     - hosts:
         - {{ $host | quote }}
-      secretName: {{ $host | replace "." "-" | replace "/" "-" | quote }}-tls
+      secretName: {{ $host | replace "." "-" | replace "/" "-" }}-tls
     {{- end }}
   {{- end }}
 {{- end }}
