@@ -34,12 +34,14 @@ securityContext:
 
 ingress:
   enabled: false
-  annotations: {}
+  className: cilium
   hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: Prefix
-  tls: []
+    - kubeconfig-server.local
+  path: /
+  pathType: Prefix
+  tls:
+    enabled: true
+  annotations: {}
+  # cert-manager.io/cluster-issuer: "letsencrypt-prd"
 
 podAnnotations: {}
