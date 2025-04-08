@@ -83,17 +83,50 @@ jobs:
                 echo "</details>"
                 echo ""
               } >>changes.md
+              {
+                echo "$changes"
+              } >>"$chart.diff"
               changed+=1
             fi
           done
 
           echo "changed=$changed" >>"$GITHUB_OUTPUT"
 
-          {
-            echo 'changes<<EOF'
-            cat changes.md
-            echo EOF
-          } >>"$GITHUB_OUTPUT"
+          # Check if the character count exceeds the limit.
+          if [[ $(wc -c <changes.md) -gt 65400 ]]; then
+            echo "long=1" >>"$GITHUB_OUTPUT"
+          else
+            echo "long=0" >>"$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload diffs
+        uses: actions/upload-artifact@v4
+        id: diff-upload
+        if: steps.diff.outputs.changed != '0' && steps.diff.outputs.long == '1'
+        with:
+          name: chart-diffs
+          path: "*.diff"
+
+      - name: Create diff comment
+        id: diff-comment
+        run: |
+          set -eou pipefail
+
+          # Check if the character count exceeds the limit.
+          if [[ $(wc -c <changes.md) -gt 65400 ]]; then
+            {
+              echo 'changes<<EOF'
+              echo "Changes are too long to be displayed inline.
+              [Download the diffs here](${{ steps.diff-upload.outputs.artifact-url }})."
+              echo EOF
+            } >>"$GITHUB_OUTPUT"
+          else
+            {
+              echo 'changes<<EOF'
+              cat changes.md
+              echo EOF
+            } >>"$GITHUB_OUTPUT"
+          fi
 
       - name: Find diff comment
         uses: peter-evans/find-comment@v3
@@ -114,7 +147,7 @@ jobs:
 
             The following charts have been modified.
 
-            ${{ steps.diff.outputs.changes }}
+            ${{ steps.diff-comment.outputs.changes }}
           edit-mode: replace
 
       - name: Delete diff comment
