@@ -39,6 +39,16 @@ output "kubeconfigs" {
   }
 }
 
+output "talosconfigs" {
+  description = "A map of Talos configs for each cluster."
+  depends_on  = [module.talos_cluster]
+  sensitive   = true
+  value = {
+    for cluster in local.taloscluster_configs :
+    cluster.metadata.name => module.talos_cluster[cluster.metadata.name].talosconfig_admin != null ? module.talos_cluster[cluster.metadata.name].talosconfig_admin : ""
+  }
+}
+
 provider "helm" {
   kubernetes {
     host                   = module.talos_cluster["hel01"].kubeconfig_credentials.host
