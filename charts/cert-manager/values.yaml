@@ -1,0 +1,6 @@
+cert-manager:
+  enabled: true
+  crds:
+    # Avoid managing CRDs manually.
+    # Let Helm do it, it's less painful.
+    enabled: true
