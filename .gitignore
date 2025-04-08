@@ -51,3 +51,6 @@ charts/*/Chart.lock
 # Kubernetes credentials.
 kubeconfig.yaml
 kubeconfig.yml
+
+# Talos credentials.
+talosconfig

@@ -44,6 +44,7 @@ data "talos_client_configuration" "this" {
     keys(local.controlplane_machines),
     keys(local.worker_machines)
   )
+  endpoints = keys(local.controlplane_machines)
 }
 
 data "talos_machine_configuration" "controlplane" {

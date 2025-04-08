@@ -1,3 +1,9 @@
+output "talosconfig_admin" {
+  description = "The Talos config for the cluster."
+  depends_on  = [data.talos_client_configuration.this]
+  value       = data.talos_client_configuration.this.talos_config
+}
+
 output "kubeconfig_user" {
   description = "The kubeconfig file for the cluster."
   depends_on  = [talos_cluster_kubeconfig.this]
