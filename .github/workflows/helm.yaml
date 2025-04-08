@@ -116,8 +116,8 @@ jobs:
           if [[ $(wc -c <changes.md) -gt 65400 ]]; then
             {
               echo 'changes<<EOF'
-              echo "Changes are too long to be displayed inline.
-              [Download the diffs here](${{ steps.diff-upload.outputs.artifact-url }})."
+              echo "Changes are too long to be displayed inline."
+              echo "[Download the diffs here](${{ steps.diff-upload.outputs.artifact-url }})."
               echo EOF
             } >>"$GITHUB_OUTPUT"
           else
