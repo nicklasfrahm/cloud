@@ -1,0 +1,18 @@
+apiVersion: v2
+type: application
+name: cert-manager
+description: Deploy cert-manager.
+icon: https://artifacthub.io/image/6d75ecff-a328-495b-a7fc-12cd84499974
+version: 0.1.0
+appVersion: "1.17.1"
+dependencies:
+  - repository: https://charts.jetstack.io
+    name: cert-manager
+    version: 1.17.1
+    condition: cert-manager.enabled
+    tags:
+      - security
+      - cert-manager
+      - certificate
+      - tls
+      - pki
