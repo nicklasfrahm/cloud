@@ -48,8 +48,26 @@ cilium:
   # Enable support for ingress.
   ingressController:
     enabled: true
-    loadbalancerMode: shared
     default: true
+    loadbalancerMode: shared
+    hostNetwork:
+      enabled: true
+      sharedListenerPort: 443
+
+  # Allow binding to privileged ports.
+  envoy:
+    enabled: true
+    securityContext:
+      capabilities:
+        keepCapNetBindService: true
+        envoy:
+          # Allow binding to privileged ports.
+          - NET_BIND_SERVICE
+          # Used since cilium proxy uses setting IPPROTO_IP/IP_TRANSPARENT.
+          - NET_ADMIN
+          # Allow performance monitoring and access to BPF maps.
+          - PERFMON
+          - BPF
 
   # Enable hubble for network observability.
   # Docs: https://docs.cilium.io/en/latest/observability/hubble/hubble-ui/index.html
