@@ -50,3 +50,11 @@ cilium:
     enabled: true
     loadbalancerMode: shared
     default: true
+
+  # Enable hubble for network observability.
+  # Docs: https://docs.cilium.io/en/latest/observability/hubble/hubble-ui/index.html
+  hubble:
+    relay:
+      enabled: true
+    ui:
+      enabled: true
