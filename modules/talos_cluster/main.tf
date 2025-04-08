@@ -77,6 +77,11 @@ data "talos_machine_configuration" "worker" {
         network = {
           hostname = each.key
         }
+        nodeLabels = {
+          "node.kubernetes.io/exclude-from-external-load-balancers" = {
+            "$patch" = "delete"
+          }
+        }
       }
     })
   ])
