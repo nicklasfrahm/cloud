@@ -1,7 +1,7 @@
 talos:
   # Configure the desired version of Talos.
   # Reference: https://github.com/siderolabs/talos/releases/latest
-  version: v1.9.3
+  version: v1.9.5
 
 kubernetes:
   # Configure the desired Kubernetes version.
