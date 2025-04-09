@@ -51,7 +51,7 @@ data "talos_machine_configuration" "controlplane" {
   cluster_name       = local.cluster_name
   cluster_endpoint   = local.cluster_endpoint
   machine_type       = "controlplane"
-  machine_secrets    = sensitive(talos_machine_secrets.secret_bundle.machine_secrets)
+  machine_secrets    = talos_machine_secrets.secret_bundle.machine_secrets
   talos_version      = var.global_config.talos.version
   kubernetes_version = var.global_config.kubernetes.version
 
@@ -72,7 +72,7 @@ data "talos_machine_configuration" "worker" {
   cluster_name       = local.cluster_name
   cluster_endpoint   = local.cluster_endpoint
   machine_type       = "worker"
-  machine_secrets    = sensitive(talos_machine_secrets.secret_bundle.machine_secrets)
+  machine_secrets    = talos_machine_secrets.secret_bundle.machine_secrets
   talos_version      = var.global_config.talos.version
   kubernetes_version = var.global_config.kubernetes.version
 
