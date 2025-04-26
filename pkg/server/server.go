@@ -1,14 +1,14 @@
-package main
+// Package server contains the plumbing for a server
+// that can handle both gRPC and REST requests.
+package server
 
 import (
 	"fmt"
 	"log"
 	"net"
 	"net/http"
-	"os"
 
 	"github.com/nicklasfrahm/cloud/pkg/kms"
-	taloskms "github.com/siderolabs/kms-client/api/kms"
 	"github.com/soheilhy/cmux"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -16,17 +16,21 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-// Dummy gRPC server implementation
-type myGRPCServer struct{}
+const defaultPort = 8080
 
-// func (s *myGRPCServer) SomeMethod(...) { ... }
+// ServerListeners constains the listeners for the server.
+type ServerListeners struct {
+	GRPCListener net.Listener
+	HTTPListener net.Listener
+}
 
-func main() {
-	// Get the port from the environment variable
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080" // Default port
-	}
+// Server is a struct that contains the server configuration.
+type Server struct {
+	listerners *ServerListeners
+}
+
+// New creates a new server instance.
+func New() *Server {
 
 	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
@@ -40,7 +44,7 @@ func main() {
 
 	// Set up REST handlers
 	mux := http.NewServeMux()
-	mux.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Pong from REST (h2c supported)\n")
 	})
 
