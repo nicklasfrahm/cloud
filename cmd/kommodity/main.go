@@ -23,6 +23,14 @@ func main() {
 	logger := zap.New(otelzap.NewCore("kommodity", otelzap.WithLoggerProvider(loggerProvider)))
 	zap.ReplaceGlobals(logger)
 
+	srv := NewServer(ctx)
+
+	if err := srv.ListenAndServe(ctx); err != nil {
+		logger.Fatal("failed to start server", zap.Error(err))
+	}
+}
+
+func NewServer(ctx context.Context) *server.Server {
 	srv := server.New(ctx).
 		WithGRPCServerInitializer(func(grpcServer *grpc.Server) error {
 			taloskms.RegisterKMSServiceServer(grpcServer, &kms.KMSServiceServer{})
@@ -37,7 +45,5 @@ func main() {
 			return nil
 		})
 
-	if err := srv.ListenAndServe(ctx); err != nil {
-		logger.Fatal("failed to start server", zap.Error(err))
-	}
+	return srv
 }
