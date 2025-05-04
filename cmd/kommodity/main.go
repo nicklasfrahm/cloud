@@ -2,26 +2,42 @@ package main
 
 import (
 	"context"
-	"log"
+	"net/http"
 
+	"github.com/nicklasfrahm/cloud/pkg/kms"
+	"github.com/nicklasfrahm/cloud/pkg/otel"
 	"github.com/nicklasfrahm/cloud/pkg/server"
+	taloskms "github.com/siderolabs/kms-client/api/kms"
+	"go.opentelemetry.io/contrib/bridges/otelzap"
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 func main() {
 	ctx := context.Background()
 
-	// configure opentelemetry logger provider
-	logExporter, _ := otlplogs.NewExporter(ctx)
-	loggerProvider := sdk.NewLoggerProvider(
-		sdk.WithBatcher(logExporter),
-		sdk.WithResource(newResource()),
-	)
-	// gracefully shutdown logger to flush accumulated signals before program finish
+	// Configure opentelemetry logger provider.
+	loggerProvider := otel.NewLoggerProvider(ctx)
 	defer loggerProvider.Shutdown(ctx)
 
-	srv := server.New()
+	logger := zap.New(otelzap.NewCore("kommodity", otelzap.WithLoggerProvider(loggerProvider)))
+	zap.ReplaceGlobals(logger)
+
+	srv := server.New(ctx).
+		WithGRPCServerInitializer(func(grpcServer *grpc.Server) error {
+			taloskms.RegisterKMSServiceServer(grpcServer, &kms.KMSServiceServer{})
+
+			return nil
+		}).
+		WithHTTPMuxInitializer(func(mux *http.ServeMux) error {
+			mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusOK)
+			})
+
+			return nil
+		})
 
 	if err := srv.ListenAndServe(ctx); err != nil {
-		log.Fatalf("failed to start server: %v", err)
+		logger.Fatal("failed to start server", zap.Error(err))
 	}
 }

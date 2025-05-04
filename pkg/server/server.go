@@ -3,80 +3,171 @@
 package server
 
 import (
+	"context"
 	"fmt"
-	"log"
 	"net"
 	"net/http"
+	"strconv"
 
-	"github.com/nicklasfrahm/cloud/pkg/kms"
 	"github.com/soheilhy/cmux"
+	"go.uber.org/zap"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-const defaultPort = 8080
+// Initializer is a function that initializes the server.
+type Initializer func() error
 
-// ServerListeners constains the listeners for the server.
-type ServerListeners struct {
-	GRPCListener net.Listener
-	HTTPListener net.Listener
+// MuxInitializer is a function that initializes the HTTP mux.
+type MuxInitializer func(*http.ServeMux) error
+
+// GRPCInitializer is a function that initializes the gRPC server.
+type GRPCInitializer func(*grpc.Server) error
+
+// HTTPServer is a struct that contains the HTTP server configuration.
+type HTTPServer struct {
+	server       *http.Server
+	listener     net.Listener
+	mux          *http.ServeMux
+	initializers []Initializer
+}
+
+// GRPCServer is a struct that contains the gRPC server configuration.
+type GRPCServer struct {
+	server       *grpc.Server
+	listener     net.Listener
+	initializers []Initializer
+}
+
+// MuxServer is a struct that contains the cmux server configuration.
+type MuxServer struct {
+	cmux     cmux.CMux
+	listener net.Listener
 }
 
 // Server is a struct that contains the server configuration.
 type Server struct {
-	listerners *ServerListeners
+	muxServer  *MuxServer
+	grpcServer *GRPCServer
+	httpServer *HTTPServer
+	logger     *zap.Logger
+	port       int
 }
 
 // New creates a new server instance.
-func New() *Server {
+func New(ctx context.Context) *Server {
+	logger := zap.L()
 
-	listener, err := net.Listen("tcp", ":"+port)
+	port := getPort(ctx)
+
+	muxListener, err := net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		logger.Fatal("Failed to start listener", zap.Error(err), zap.Int("port", port))
 	}
 
-	m := cmux.New(listener)
+	multiplexer := cmux.New(muxListener)
 
-	grpcL := m.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
-	httpL := m.Match(cmux.Any()) // Now handle both HTTP/1 and h2c in one place
+	grpcListener := multiplexer.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings(http.CanonicalHeaderKey("content-type"), "application/grpc"))
+	httpListener := multiplexer.Match(cmux.Any())
 
-	// Set up REST handlers
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Pong from REST (h2c supported)\n")
+	return &Server{
+		muxServer: &MuxServer{
+			cmux:     multiplexer,
+			listener: muxListener,
+		},
+		httpServer: &HTTPServer{
+			server:       &http.Server{},
+			listener:     httpListener,
+			mux:          http.NewServeMux(),
+			initializers: []Initializer{},
+		},
+		grpcServer: &GRPCServer{
+			server:       grpc.NewServer(),
+			listener:     grpcListener,
+			initializers: []Initializer{},
+		},
+		logger: logger,
+		port:   port,
+	}
+}
+
+func (s *Server) ListenAndServe(ctx context.Context) error {
+	logger := zap.L()
+
+	for _, initilizer := range s.httpServer.initializers {
+		if err := initilizer(); err != nil {
+			logger.Error("Failed to initialize HTTP server", zap.Error(err))
+
+			return err
+		}
+	}
+
+	for _, initilizer := range s.grpcServer.initializers {
+		if err := initilizer(); err != nil {
+			logger.Error("Failed to initialize gRPC server", zap.Error(err))
+
+			return err
+		}
+	}
+
+	go s.serveHTTP(logger)
+	go s.serveGRPC(logger)
+
+	logger.Info("Starting cmux server", zap.Int("port", s.port))
+	if err := s.muxServer.cmux.Serve(); err != nil {
+		logger.Error("Failed to run cmux server", zap.Error(err), zap.Int("port", s.port))
+	}
+
+	return nil
+}
+
+func (s *Server) serveHTTP(logger *zap.Logger) {
+	// Wrap the HTTP handler to provide h2c support.
+	h2cHandler := h2c.NewHandler(s.httpServer.mux, &http2.Server{})
+
+	logger.Info("Starting REST server", zap.Int("port", s.port))
+
+	if err := http.Serve(s.httpServer.listener, h2cHandler); err != nil {
+		logger.Error("Failed to run REST server", zap.Error(err), zap.Int("port", s.port))
+	}
+}
+
+func (s *Server) serveGRPC(logger *zap.Logger) {
+	// Allow reflection to enable tools like grpcurl.
+	reflection.Register(s.grpcServer.server)
+
+	logger.Info("Starting gRPC server", zap.Int("port", s.port))
+	if err := s.grpcServer.server.Serve(s.grpcServer.listener); err != nil {
+		logger.Error("Failed to run gRPC server", zap.Error(err), zap.Int("port", s.port))
+	}
+}
+
+// WithHTTPMuxInitializer registers a HTTP service.
+func (s *Server) WithHTTPMuxInitializer(initialize MuxInitializer) *Server {
+	s.httpServer.initializers = append(s.httpServer.initializers, func() error {
+		err := initialize(s.httpServer.mux)
+		if err != nil {
+			return fmt.Errorf("failed to run HTTP mux initializer: %w", err)
+		}
+
+		return nil
 	})
 
-	// Wrap the HTTP handler with h2c support
-	h2s := &http2.Server{}
-	h1h2cHandler := h2c.NewHandler(mux, h2s)
+	return s
+}
 
-	// gRPC server
-	grpcServer := grpc.NewServer()
-	taloskms.RegisterKMSServiceServer(grpcServer, &kms.KMSServiceServer{})
-
-	// Enable gRPC reflection
-	reflection.Register(grpcServer)
-
-	// Start gRPC
-	go func() {
-		log.Println("Starting gRPC server on :" + port)
-		if err := grpcServer.Serve(grpcL); err != nil {
-			log.Fatalf("gRPC server failed: %v", err)
+// WithGRPCServerInitializer registers a gRPC service.
+func (s *Server) WithGRPCServerInitializer(initialize GRPCInitializer) *Server {
+	s.grpcServer.initializers = append(s.grpcServer.initializers, func() error {
+		err := initialize(s.grpcServer.server)
+		if err != nil {
+			return fmt.Errorf("failed to run gRPC server initializer: %w", err)
 		}
-	}()
 
-	// Start REST with h2c support
-	go func() {
-		log.Println("Starting REST server on :" + port)
-		if err := http.Serve(httpL, h1h2cHandler); err != nil {
-			log.Fatalf("REST server failed: %v", err)
-		}
-	}()
+		return nil
+	})
 
-	log.Println("cmux multiplexer running on :" + port)
-	if err := m.Serve(); err != nil {
-		log.Fatalf("cmux server failed: %v", err)
-	}
+	return s
 }

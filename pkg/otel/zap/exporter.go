@@ -41,6 +41,7 @@ func New(opts ...Option) *Exporter {
 		// Create a new logger with the specified configuration
 		logger, err := config.Build()
 		if err != nil {
+			// We don't ever expect this to fail.
 			panic(err)
 		}
 
@@ -51,7 +52,7 @@ func New(opts ...Option) *Exporter {
 }
 
 // exportOne prints a single log record.
-func (e *Exporter) exportOne(ctx context.Context, rec sdklog.Record) error {
+func (e *Exporter) exportOne(_ context.Context, rec sdklog.Record) error {
 	// Convert the log record to a zap field
 	fields := make([]zapcore.Field, 0, rec.AttributesLen())
 	rec.WalkAttributes(func(kv log.KeyValue) bool {
