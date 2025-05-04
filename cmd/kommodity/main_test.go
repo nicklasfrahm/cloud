@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection/grpc_reflection_v1"
 )
 
 func TestKMSService(t *testing.T) {
@@ -74,4 +75,28 @@ func TestKMSService(t *testing.T) {
 	// Assert: Unseal.
 	require.NoError(t, err, "Unseal failed")
 	assert.Equal(t, "test data", string(unsealResp.Data), "Unexpected unseal response")
+
+	// Arrange: Test reflection.
+	reflectionClient := grpc_reflection_v1.NewServerReflectionClient(conn)
+
+	stream, err := reflectionClient.ServerReflectionInfo(ctx)
+	require.NoError(t, err, "Getting reflection info should not fail")
+
+	// Act: Request list of services
+	if err := stream.Send(&grpc_reflection_v1.ServerReflectionRequest{
+		MessageRequest: &grpc_reflection_v1.ServerReflectionRequest_ListServices{},
+	}); err != nil {
+		t.Fatalf("Failed to send request: %v", err)
+	}
+
+	resp, err := stream.Recv()
+	require.NoError(t, err, "Receiving reflection response should not fail")
+
+	// Assert: Reflection.
+	serviceNames := make([]string, len(resp.GetListServicesResponse().Service))
+	for i, service := range resp.GetListServicesResponse().Service {
+		serviceNames[i] = service.Name
+	}
+
+	assert.Contains(t, serviceNames, "grpc.reflection.v1.ServerReflection", "ServerReflection service should be listed")
 }
