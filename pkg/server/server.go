@@ -69,7 +69,7 @@ func New(ctx context.Context) *Server {
 
 	multiplexer := cmux.New(muxListener)
 
-	grpcListener := multiplexer.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings(http.CanonicalHeaderKey("content-type"), "application/grpc"))
+	grpcListener := multiplexer.MatchWithWriters(cmux.HTTP2MatchHeaderFieldPrefixSendSettings("content-type", "application/grpc"))
 	httpListener := multiplexer.Match(cmux.Any())
 
 	return &Server{

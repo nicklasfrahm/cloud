@@ -39,7 +39,7 @@ func NewServer(ctx context.Context) *server.Server {
 		}).
 		WithHTTPMuxInitializer(func(mux *http.ServeMux) error {
 			mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("OK"))
 			})
 
 			return nil
