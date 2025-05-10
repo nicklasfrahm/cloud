@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kubeconfig-server.fullname" . }}-nginx-config
+  labels:
+    {{- include "kubeconfig-server.labels" . | nindent 4 }}
+data:
+  default.conf: |
+    server {
+      listen 8080;
+      server_name _;
+
+      # Security headers
+      add_header X-Content-Type-Options "nosniff" always;
+      add_header X-Frame-Options "DENY" always;
+      add_header X-XSS-Protection "1; mode=block" always;
+      add_header Content-Security-Policy "default-src 'self'; frame-ancestors 'none';" always;
+      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+      add_header Referrer-Policy "no-referrer" always;
+
+      # Hide nginx version
+      server_tokens off;
+
+      location / {
+        root /usr/share/nginx/html;
+        index index.html;
+        # Prevent excessive requests
+        limit_req zone=one burst=10 nodelay;
+        # Only allow GET and HEAD request methods
+        limit_except GET HEAD {
+          deny all;
+        }
+      }
+
+      location /kubeconfig {
+        root /usr/share/nginx/html;
+        add_header Content-Disposition "attachment; filename=kubeconfig";
+        add_header Content-Type "application/yaml";
+        # Only allow GET method
+        limit_except GET {
+          deny all;
+        }
+      }
+    }
+
+    # Basic rate limiting
+    limit_req_zone $binary_remote_addr zone=one:10m rate=1r/s;
