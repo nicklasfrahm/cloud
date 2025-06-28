@@ -1,9 +1,11 @@
 locals {
+  root = "${path.module}/../.."
+
   # Fetch global configuration options, such as the Talos version.
-  global_config = yamldecode(file("${path.cwd}/config.yaml"))
+  global_config = yamldecode(file("${local.root}/config.yaml"))
 
   # Fetch the list of all clusters.
-  taloscluster_path  = "${path.cwd}/deploy/manifests/talosclusters"
+  taloscluster_path  = "${local.root}/deploy/manifests/talosclusters"
   taloscluster_files = fileset(local.taloscluster_path, "*.yaml")
   taloscluster_configs = {
     for filename in local.taloscluster_files :
@@ -11,7 +13,7 @@ locals {
   }
 
   # Fetch the list of all machines.
-  machines_path  = "${path.cwd}/deploy/manifests/machines"
+  machines_path  = "${local.root}/deploy/manifests/machines"
   machines_files = fileset(local.machines_path, "*.yaml")
   machines_configs = [
     for filename in local.machines_files :
