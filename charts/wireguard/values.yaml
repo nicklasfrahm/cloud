@@ -5,7 +5,8 @@ wg-easy:
 
   # Ensure that we store secrets in a Kubernetes Secret.
   secret:
-    create: true
+    create: false
+    name: {{ .Release.Name }}-env
 
   environmentVariables:
     # WAN IP or a Dynamic DNS hostname.
