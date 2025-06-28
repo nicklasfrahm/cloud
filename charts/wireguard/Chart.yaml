@@ -8,7 +8,7 @@ appVersion: "14"
 dependencies:
   - repository: https://raw.githubusercontent.com/hansehe/wg-easy-helm/master/helm/charts
     name: wg-easy
-    version: 0.1.1
+    version: 0.1.3
     condition: wg-easy.enabled
     tags:
       - wireguard
