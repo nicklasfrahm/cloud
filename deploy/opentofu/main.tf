@@ -50,7 +50,7 @@ output "talosconfigs" {
 }
 
 provider "helm" {
-  kubernetes {
+  kubernetes = {
     host                   = module.talos_cluster["hel01"].kubeconfig_credentials.host
     cluster_ca_certificate = base64decode(module.talos_cluster["hel01"].kubeconfig_credentials.ca_certificate)
     client_certificate     = base64decode(module.talos_cluster["hel01"].kubeconfig_credentials.client_certificate)
