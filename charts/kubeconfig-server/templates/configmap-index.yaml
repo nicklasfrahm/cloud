@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kubeconfig-server.fullname" . }}-index-html
+  labels:
+    {{- include "kubeconfig-server.labels" . | nindent 4 }}
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Kubernetes Configuration</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 20px;
+          line-height: 1.6;
+        }
+        .container {
+          background-color: #f9f9f9;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          padding: 20px;
+          margin-top: 20px;
+        }
+        h1 {
+          color: #326ce5;
+        }
+        .download-button {
+          display: inline-block;
+          background-color: #326ce5;
+          color: white;
+          padding: 10px 20px;
+          text-decoration: none;
+          border-radius: 4px;
+          font-weight: bold;
+          margin-top: 15px;
+        }
+        .download-button:hover {
+          background-color: #254b9e;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Kubernetes Configuration</h1>
+      <div class="container">
+        <h2>Download Kubeconfig</h2>
+        <p>Click the button below to download your kubeconfig file:</p>
+        <a href="/kubeconfig" class="download-button">Download Kubeconfig</a>
+
+        <h3>Usage Instructions:</h3>
+        <p>After downloading the kubeconfig file:</p>
+        <ol>
+          <li>Save it to a secure location</li>
+          <li>Use it with kubectl by setting the KUBECONFIG environment variable:
+            <pre>export KUBECONFIG=/path/to/downloaded/kubeconfig</pre>
+          </li>
+          <li>Or use it directly with kubectl commands:
+            <pre>kubectl --kubeconfig=/path/to/downloaded/kubeconfig get pods</pre>
+          </li>
+        </ol>
+      </div>
+    </body>
+    </html>
