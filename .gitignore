@@ -54,3 +54,5 @@ kubeconfig.yml
 
 # Talos credentials.
 talosconfig
+controlplane.yaml
+worker.yaml
