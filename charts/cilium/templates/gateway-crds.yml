@@ -69,8 +69,6 @@ spec:
         - /bin/sh
         - -c
         - |
-          set -euo pipefail
-
           echo "Installing Gateway API CRDs version {{ .Values.gatewayAPI.crds.version }}/{{ .Values.gatewayAPI.crds.channel }}"
 
           {{- range $index, $value := .Values.gatewayAPI.crds.resources }}
