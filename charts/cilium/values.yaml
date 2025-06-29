@@ -45,26 +45,26 @@ cilium:
     enabled: true
   defaultLBServiceIPAM: nodeipam
 
-  # Enable support for ingress.
-  ingressController:
-    enabled: true
-    loadbalancerMode: shared
-    default: true
-
   # Enable cilium support for the Gateway API.
   # Docs: https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/#gs-gateway-api
   gatewayAPI:
     enabled: true
+    gatewayClass:
+      create: "true"
 
-# Enable support for Gateway API
-gatewayAPI:
-  crds:
-    # Enable CRD installation. Note that disabling this will not remove existing CRDs.
-    # If you want to remove existing CRDs, you must do so manually.
-    install: true
+hooks:
+  # Install the Gateway API CRDs before installing the helm chart.
+  # This is idempotent and will never remove existing CRDs.
+  gatewayCRDInstaller:
+    # Disable the installation of the Gateway API CRDs.
+    enabled: true
+    # Configure the image used to install the Gateway API CRDs.
+    image:
+      repository: "bitnami/kubectl"
+      tag: "1.33.2-debian-12-r2"
     # Version of the Gateway API CRDs to install.
     # Docs: https://gateway-api.sigs.k8s.io/installation/
-    version: 1.2.0
+    version: "1.2.0"
     # Whether to install experimental CRDs. May be either "standard" or "experimental".
     # Docs: https://gateway-api.sigs.k8s.io/concepts/versioning/
     channel: "standard"
