@@ -101,3 +101,9 @@ cluster:
                         --install \
                         --namespace kube-system \
                         --set cilium.operator.replicas=1
+
+machine:
+  nodeLabels:
+    # Allow cilium to use the node's IP address for external load balancers.
+    node.kubernetes.io/exclude-from-external-load-balancers:
+      "$patch": "delete"
