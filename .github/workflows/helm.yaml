@@ -329,7 +329,7 @@ jobs:
           for chart in "${changed_charts[@]}"; do
             [[ ! -f "charts/$chart/Chart.lock" ]] && helm dependency build "charts/$chart"
             helm package "charts/$chart"
-            helm push "$chart-*.tgz" oci://ghcr.io/nicklasfrahm/charts
+            helm push $chart-*.tgz oci://ghcr.io/nicklasfrahm/charts
             oras push \
               "ghcr.io/nicklasfrahm/charts/$chart:artifacthub.io" \
               --config /dev/null:application/vnd.cncf.artifacthub.config.v1+yaml \
