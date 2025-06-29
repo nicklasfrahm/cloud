@@ -57,6 +57,14 @@ spec:
       containers:
       - name: gateway-api-crds-installer
         image: bitnami/kubectl:1.33.2-debian-12-r2
+        env:
+        - name: KUBERNETES_SERVICE_HOST
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: KUBERNETES_SERVICE_PORT
+          value: "6443"
         command:
         - /bin/sh
         - -c
@@ -69,4 +77,22 @@ spec:
           kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v{{ $.Values.gatewayAPI.crds.version }}/config/crd/{{ $.Values.gatewayAPI.crds.channel }}/{{ $value }}.yaml
           {{- end }}
       restartPolicy: OnFailure
+      tolerations:
+        - operator: Exists
+        - effect: NoSchedule
+          operator: Exists
+        - effect: NoExecute
+          operator: Exists
+        - effect: PreferNoSchedule
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+        - effect: NoExecute
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+        - effect: PreferNoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+      hostNetwork: true
 {{- end }}
