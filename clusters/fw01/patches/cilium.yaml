@@ -97,6 +97,6 @@ cluster:
                     - /bin/sh
                     - -c
                     - |
-                      helm upgrade --install cilium oci://ghcr.io/nicklasfrahm/charts/cilium \
+                      helm upgrade --install cilium oci://ghcr.io/nicklasfrahm/charts/cilium:0.2.1 \
                         --namespace kube-system \
                         --set cilium.operator.replicas=1
