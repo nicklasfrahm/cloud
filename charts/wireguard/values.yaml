@@ -3,10 +3,21 @@ wg-easy:
   image:
     versionOverride: "14"
 
-  # TODO: Submit an upstream PR to place these in secret
-  # instead of directly in the deployment.
+  # Ensure that we store secrets in a Kubernetes Secret.
+  secret:
+    create: false
+    name: "{{ $.Release.Name }}-env"
+
   environmentVariables:
     # WAN IP or a Dynamic DNS hostname.
     WG_HOST: CHANGE_ME
     # Password for the UI.
     PASSWORD: CHANGE_ME
+
+  ingress:
+    enabled: true
+    hosts:
+      - host: CHANGE_ME
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
