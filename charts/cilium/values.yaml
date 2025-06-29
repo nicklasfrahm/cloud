@@ -67,7 +67,7 @@ hooks:
     version: "1.2.0"
     # Whether to install experimental CRDs. May be either "standard" or "experimental".
     # Docs: https://gateway-api.sigs.k8s.io/concepts/versioning/
-    channel: "standard"
+    channel: "experimental"
     # Which CRDs to install.
     # Reference: https://github.com/kubernetes-sigs/gateway-api/tree/v1.2.0/config/crd/standard
     resources:
@@ -76,5 +76,4 @@ hooks:
       - gateway.networking.k8s.io_httproutes
       - gateway.networking.k8s.io_referencegrants
       - gateway.networking.k8s.io_grpcroutes
-      # Uncomment the following line to enable experimental CRDs.
-      # - gateway.networking.k8s.io_tlsroutes
+      - gateway.networking.k8s.io_tlsroutes
