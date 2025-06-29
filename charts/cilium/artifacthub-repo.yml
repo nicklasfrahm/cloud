@@ -1,7 +1,7 @@
 # References:
 # - https://artifacthub.io/docs/topics/repositories/container-images/#repository-metadata
 # - https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-repo.yml
-repositoryID: "nicklasfrahm-cilium"
+repositoryID: "6e4a5de0-245c-4de8-881c-8a2a0309005a"
 owners:
   - name: Nicklas Frahm
     email: nicklas.frahm@gmail.com
