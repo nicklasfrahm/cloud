@@ -44,7 +44,7 @@ jobs:
           cd pr
 
           git fetch origin main
-          mapfile -t changed_charts < <(git diff --name-only origin/main | grep -oP '^charts/\K[^/]+' | sort -u)
+          mapfile -t changed_charts < <(git diff --name-only origin/main | grep -oE '^charts/([^/]+)' | sed 's/charts\///' | sort -u)
 
           cd ..
 
