@@ -3,7 +3,7 @@
 # - https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-repo.yml
 repositoryID: "nicklasfrahm-cilium"
 owners:
-  - name: nicklasfrahm
+  - name: Nicklas Frahm
     email: nicklas.frahm@gmail.com
 # (optional) This may be useful to yank versions of packages.
 # It prevents packages from being indexed by Artifact Hub.

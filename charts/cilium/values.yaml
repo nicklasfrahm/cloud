@@ -50,3 +50,31 @@ cilium:
     enabled: true
     loadbalancerMode: shared
     default: true
+
+  # Enable cilium support for the Gateway API.
+  # Docs: https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/#gs-gateway-api
+  gatewayAPI:
+    enabled: true
+
+# Enable support for Gateway API
+gatewayAPI:
+  crds:
+    # Enable CRD installation. Note that disabling this will not remove existing CRDs.
+    # If you want to remove existing CRDs, you must do so manually.
+    install: true
+    # Version of the Gateway API CRDs to install.
+    # Docs: https://gateway-api.sigs.k8s.io/installation/
+    version: 1.2.0
+    # Whether to install experimental CRDs. May be either "standard" or "experimental".
+    # Docs: https://gateway-api.sigs.k8s.io/concepts/versioning/
+    channel: "standard"
+    # Which CRDs to install.
+    # Reference: https://github.com/kubernetes-sigs/gateway-api/tree/v1.2.0/config/crd/standard
+    resources:
+      - gateway.networking.k8s.io_gatewayclasses
+      - gateway.networking.k8s.io_gateways
+      - gateway.networking.k8s.io_httproutes
+      - gateway.networking.k8s.io_referencegrants
+      - gateway.networking.k8s.io_grpcroutes
+      # Uncomment the following line to enable experimental CRDs.
+      # - gateway.networking.k8s.io_tlsroutes
