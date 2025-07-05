@@ -1,0 +1,41 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ .Values.gateway.name | quote }}
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  gatewayClassName: {{ .Values.gateway.className | default "cilium" | quote }}
+  listeners:
+    - protocol: HTTP
+      port: 80
+      name: http
+      {{- with .Values.gateway.hostnames }}
+      hostnames:
+        {{- range . }}
+        - {{ . | quote }}
+        {{- end }}
+      {{- end }}
+      allowedRoutes:
+        namespaces:
+          from: All
+    {{- if .Values.gateway.tls.enabled }}
+    - protocol: HTTPS
+      port: 443
+      name: https
+      {{- with .Values.gateway.hostnames }}
+      hostnames:
+        {{- range . }}
+        - {{ . | quote }}
+        {{- end }}
+      {{- end }}
+      tls:
+        mode: Terminate
+        certificateRefs:
+          {{- range .Values.gateway.hostnames }}
+          - name: {{ . | trimSuffix "." | replace "." "-" }}-tls
+            namespace: {{ $.Release.Namespace | quote }}
+          {{- end }}
+      allowedRoutes:
+        namespaces:
+          from: All
+    {{- end }}

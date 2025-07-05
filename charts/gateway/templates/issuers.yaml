@@ -1,0 +1,24 @@
+{{- range .Values.issuers -}}
+{{- if .enabled -}}
+---
+apiVersion: cert-manager.io/v1
+kind: {{ .kind | default "Issuer" | quote }}
+metadata:
+  name: {{ .name | default "letsencrypt-production" }}
+  {{- if (eq .kind "Issuer") }}
+  namespace: {{ $.Release.Namespace | quote }}
+  {{- end }}
+spec:
+  acme:
+    server: {{ .server | quote }}
+    privateKeySecretRef:
+      name: {{ printf "%s-account-key" .name | quote }}
+    solvers:
+      - http01:
+          gatewayHTTPRoute:
+            parentRefs:
+              - kind: Gateway
+                namespace: {{ $.Release.Namespace | quote }}
+                name: {{ $.Values.gateway.name | default "shared-http" | quote }}
+{{- end -}}
+{{- end -}}

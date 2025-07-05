@@ -1,0 +1,22 @@
+gateway:
+  name: "shared-http"
+  className: "cilium"
+  tls:
+    enabled: true
+    issuer:
+      kind: "Issuer"
+      name: "letsencrypt-production"
+  hostnames:
+    - "example.com"
+
+issuers:
+  letsEncryptProduction:
+    enabled: true
+    kind: "Issuer"
+    name: "letsencrypt-production"
+    server: "https://acme-v02.api.letsencrypt.org/directory"
+  letsEncryptStaging:
+    enabled: false
+    kind: "Issuer"
+    name: "letsencrypt-staging"
+    server: "https://acme-staging-v02.api.letsencrypt.org/directory"
