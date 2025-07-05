@@ -1,0 +1,16 @@
+apiVersion: v2
+type: application
+name: argocd
+description: Deploy ArgoCD for continuous delivery and GitOps workflows.
+icon: https://artifacthub.io/image/e16221f4-a3b1-49f6-9b65-cb4dbf30ed83
+version: 8.1.2
+appVersion: "8.1.2"
+dependencies:
+  - repository: https://argoproj.github.io/argo-helm
+    name: argo-cd
+    alias: argocd
+    version: 8.1.2
+    condition: argocd.enabled
+    tags:
+      - gitops
+      - continuous-delivery
