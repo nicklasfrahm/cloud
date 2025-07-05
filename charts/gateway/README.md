@@ -19,24 +19,16 @@ This chart deploys a Kubernetes Gateway resource that manages ingress traffic us
 
 ## Installation
 
-### Add the repository (if applicable)
-
-```bash
-# If this chart is published to a Helm repository
-helm repo add <repo-name> <repo-url>
-helm repo update
-```
-
 ### Install the chart
 
 ```bash
-helm install my-gateway ./charts/gateway -n gateway-system --create-namespace
+helm install my-gateway oci://ghcr.io/nicklasfrahm/charts/gateway -n kube-system
 ```
 
 ### Install with custom values
 
 ```bash
-helm install my-gateway ./charts/gateway -n gateway-system --create-namespace -f my-values.yaml
+helm install my-gateway oci://ghcr.io/nicklasfrahm/charts/gateway -n kube-system -f my-values.yaml
 ```
 
 ## Configuration
@@ -135,7 +127,7 @@ metadata:
 spec:
   parentRefs:
     - name: shared-http
-      namespace: gateway-system
+      namespace: kube-system
   hostnames:
     - "api.example.com"
   rules:
@@ -195,5 +187,5 @@ kubectl describe issuer <issuer-name>
 ## Uninstalling
 
 ```bash
-helm uninstall my-gateway -n gateway-system
+helm uninstall my-gateway -n kube-system
 ```
