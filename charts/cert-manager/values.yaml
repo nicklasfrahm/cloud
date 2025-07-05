@@ -4,3 +4,5 @@ cert-manager:
     # Avoid managing CRDs manually.
     # Let Helm do it, it's less painful.
     enabled: true
+  extraArgs:
+    - "--enable-gateway-api"
