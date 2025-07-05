@@ -3,5 +3,5 @@ type: application
 name: gateway
 description: Deploy a Kubernetes Gateway for managing ingress traffic.
 icon: https://www.kubeblog.com/wp-content/uploads/2024/09/gateway-api-logo-1.png
-version: 0.1.1
-appVersion: "0.1.1"
+version: 0.1.2
+appVersion: "0.1.2"
