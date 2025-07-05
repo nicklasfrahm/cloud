@@ -5,6 +5,21 @@ argocd:
       admin.enabled: false
     params:
       server.insecure: true
+    # TODO: Verify this.
+    dex.config: |
+      connectors:
+      - type: oidc
+        id: auth0
+        name: Auth0
+        config:
+        issuer: https://nicklasfrahm.eu.auth0.com/
+        clientID: YOUR_CLIENT_ID
+        redirectURI: https://argocd.example.com/api/dex/callback
+        usePKCE: true
+        requestedScopes:
+          - openid
+          - profile
+          - email
 
 httpRoute:
   enabled: true
