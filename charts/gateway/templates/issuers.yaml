@@ -1,5 +1,5 @@
-{{- range .Values.issuers -}}
-{{- if .enabled -}}
+{{- range .Values.issuers }}
+{{- if .enabled }}
 ---
 apiVersion: cert-manager.io/v1
 kind: {{ .kind | default "Issuer" | quote }}
@@ -20,5 +20,5 @@ spec:
               - kind: Gateway
                 namespace: {{ $.Release.Namespace | quote }}
                 name: {{ $.Values.gateway.name | default "shared-http" | quote }}
-{{- end -}}
-{{- end -}}
+{{- end }}
+{{- end }}
