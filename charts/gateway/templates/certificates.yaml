@@ -4,13 +4,15 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ . | trimSuffix "." | replace "." "-" | printf "%s-tls" | quote }}
+  name: {{ include "gateway.secretName" . }}
   namespace: {{ $.Release.Namespace | quote }}
+  labels:
+    {{- include "gateway.labels" $ | nindent 4 }}
 spec:
   issuerRef:
     kind: {{ $.Values.gateway.tls.issuer.kind | quote }}
     name: {{ $.Values.gateway.tls.issuer.name | quote }}
-  secretName: {{ . | trimSuffix "." | replace "." "-" | printf "%s-tls" | quote }}
+  secretName: {{ include "gateway.secretName" . }}
   dnsNames:
     - {{ . | quote }}
 {{- end }}

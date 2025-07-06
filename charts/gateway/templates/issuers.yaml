@@ -4,10 +4,12 @@
 apiVersion: cert-manager.io/v1
 kind: {{ .kind | default "Issuer" | quote }}
 metadata:
-  name: {{ .name | default "letsencrypt-production" }}
+  name: {{ .name | default "letsencrypt-production" | quote }}
   {{- if (eq .kind "Issuer") }}
   namespace: {{ $.Release.Namespace | quote }}
   {{- end }}
+  labels:
+    {{- include "gateway.labels" $ | nindent 4 }}
 spec:
   acme:
     server: {{ .server | quote }}
@@ -16,6 +18,7 @@ spec:
     solvers:
       - http01:
           gatewayHTTPRoute:
+            serviceType: ClusterIP
             parentRefs:
               - kind: Gateway
                 namespace: {{ $.Release.Namespace | quote }}
