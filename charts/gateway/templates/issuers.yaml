@@ -16,6 +16,7 @@ spec:
     solvers:
       - http01:
           gatewayHTTPRoute:
+            serviceType: ClusterIP
             parentRefs:
               - kind: Gateway
                 namespace: {{ $.Release.Namespace | quote }}
