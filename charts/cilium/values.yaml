@@ -52,6 +52,14 @@ cilium:
     gatewayClass:
       create: "true"
 
+  # Enable hubble for network observability.
+  # Docs: https://docs.cilium.io/en/latest/observability/hubble/hubble-ui/index.html
+  hubble:
+    relay:
+      enabled: true
+    ui:
+      enabled: true
+
 hooks:
   # Install the Gateway API CRDs before installing the helm chart.
   # This is idempotent and will never remove existing CRDs.
