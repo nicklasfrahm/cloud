@@ -8,6 +8,8 @@ metadata:
   {{- if (eq .kind "Issuer") }}
   namespace: {{ $.Release.Namespace | quote }}
   {{- end }}
+  labels:
+    {{- include "gateway.labels" . | nindent 4 }}
 spec:
   acme:
     server: {{ .server | quote }}

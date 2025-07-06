@@ -6,6 +6,8 @@ kind: Certificate
 metadata:
   name: {{ . | trimSuffix "." | replace "." "-" | printf "%s-tls" | quote }}
   namespace: {{ $.Release.Namespace | quote }}
+  labels:
+    {{- include "gateway.labels" . | nindent 4 }}
 spec:
   issuerRef:
     kind: {{ $.Values.gateway.tls.issuer.kind | quote }}
