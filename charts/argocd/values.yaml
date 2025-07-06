@@ -6,23 +6,25 @@ argocd:
     params:
       server.insecure: true
     # TODO: Verify this.
-    dex.config: |
-      connectors:
-      - type: oidc
-        id: auth0
-        name: Auth0
-        config:
-        issuer: https://nicklasfrahm.eu.auth0.com/
-        clientID: YOUR_CLIENT_ID
-        redirectURI: https://argocd.example.com/api/dex/callback
-        usePKCE: true
-        requestedScopes:
-          - openid
-          - profile
-          - email
+    oidc.config: |
+      name: Auth0
+      issuer: https://nicklasfrahm.eu.auth0.com/
+      clientID: eozs4sPgyyHh0eb3NgaTFbwdTyN2QzAF
+      skipAudienceCheckWhenTokenHasNoAudience: true
+      requestedIDTokenClaims: {"groups": {"essential": true}}
+      enablePKCEAuthentication: true
+    policy.default: ""
+    policy.csv: |
+      # Provide full access to platform admins.
+      g, platform-admin, role:admin
+  redis:
+    enabled: false
+  dex:
+    enabled: false
 
 httpRoute:
   enabled: true
   gateway:
     namespace: kube-system
     name: shared-http
+  hostname: "argocd.example.com"
