@@ -25,3 +25,8 @@ clusters that are not using kube-proxy.
   This chart installs the Gateway API CRDs, which are required for the
   Gateway API controller to function. It does this using a `pre-install`
   hook to ensure that the CRDs are installed before the controller is started.
+
+- **Hubble support**  
+  This chart enables Hubble for network observability, including the Hubble UI
+  and Hubble Relay. This allows you to monitor network traffic and events in
+  real-time.
