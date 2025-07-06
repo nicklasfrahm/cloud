@@ -24,7 +24,7 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: {{ . | trimSuffix "." | replace "." "-" | printf "%s-tls" | quote }}
+          - name: {{ include "gateway.secretName" . }}
             namespace: {{ $.Release.Namespace | quote }}
       allowedRoutes:
         namespaces:
