@@ -1,4 +1,4 @@
-{{- if (and (.Values.cilium.gatewayAPI.enabled) (.Values.hooks.gatewayCRDInstaller.enabled)) }}
+{{- if (.Values.gatewayCRDInstaller.enabled) }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -16,7 +16,7 @@ spec:
       serviceAccountName: {{ .Release.Name }}-gateway-crd-installer
       containers:
       - name: gateway-crd-installer
-        image: "{{ .Values.hooks.gatewayCRDInstaller.image.repository }}:{{ .Values.hooks.gatewayCRDInstaller.image.tag }}"
+        image: "{{ .Values.gatewayCRDInstaller.image.repository }}:{{ .Values.gatewayCRDInstaller.image.tag }}"
         env:
         - name: KUBERNETES_SERVICE_HOST
           valueFrom:
@@ -29,9 +29,9 @@ spec:
         - /bin/sh
         - -c
         - |
-          echo "Installing Gateway API CRDs: {{ .Values.hooks.gatewayCRDInstaller.version }}/{{ .Values.hooks.gatewayCRDInstaller.channel }}"
-          {{- range $index, $value := .Values.hooks.gatewayCRDInstaller.resources }}
-          kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v{{ $.Values.hooks.gatewayCRDInstaller.version }}/config/crd/{{ $.Values.hooks.gatewayCRDInstaller.channel }}/{{ $value }}.yaml
+          echo "Installing Gateway API CRDs: {{ .Values.gatewayCRDInstaller.version }}/{{ .Values.gatewayCRDInstaller.channel }}"
+          {{- range $index, $value := .Values.gatewayCRDInstaller.resources }}
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v{{ $.Values.gatewayCRDInstaller.version }}/config/crd/{{ $.Values.gatewayCRDInstaller.channel }}/{{ $value }}.yaml
           {{- end }}
 
           echo "Successfully installed Gateway API CRDs."
