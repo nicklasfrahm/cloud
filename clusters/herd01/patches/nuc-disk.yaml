@@ -1,0 +1,5 @@
+machine:
+  install:
+    diskSelector:
+      size: "<= 150 GB"
+      busPath: "/pci0000:00/0000:00:12.0/ata2/*"
