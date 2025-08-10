@@ -105,6 +105,7 @@ cluster:
                         --namespace kube-system \
                         --set cilium.operator.replicas=1
 
+# TODO: https://github.com/siderolabs/talos/issues/11549
 # machine:
 #   nodeLabels:
 #     # Allow cilium to use the node's IP address for external load balancers.
