@@ -50,7 +50,7 @@ cilium:
   gatewayAPI:
     enabled: true
     gatewayClass:
-      create: "true"
+      create: true
 
   # Enable hubble for network observability.
   # Docs: https://docs.cilium.io/en/latest/observability/hubble/hubble-ui/index.html
