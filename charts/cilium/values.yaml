@@ -1,9 +1,17 @@
 cilium:
   enabled: true
 
+  # Configure logging for the Cilium Agent.
+  extraArgs:
+    - "--log-opt=format=json-ts"
+    - "--log-opt=level=warn"
+
   # Allow running Cilium on a single node cluster.
   operator:
     replicas: 1
+    extraArgs:
+      - "--log-opt=format=json-ts"
+      - "--log-opt=level=warn"
 
   # Tune Cilium for deployment on Talos.
   # Docs: https://www.talos.dev/v1.9/kubernetes-guides/network/deploying-cilium/#without-kube-proxy
