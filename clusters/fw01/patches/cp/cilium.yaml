@@ -49,6 +49,7 @@ cluster:
           namespace: kube-system
         spec:
           backoffLimit: 10
+          ttlSecondsAfterFinished: 3600
           template:
             metadata:
               labels:
@@ -105,9 +106,8 @@ cluster:
                         --namespace kube-system \
                         --set cilium.operator.replicas=1
 
-# TODO: https://github.com/siderolabs/talos/issues/11549
-# machine:
-#   nodeLabels:
-#     # Allow cilium to use the node's IP address for external load balancers.
-#     node.kubernetes.io/exclude-from-external-load-balancers:
-#       "$patch": "delete"
+machine:
+  nodeLabels:
+    # Allow cilium to use the node's IP address for external load balancers.
+    node.kubernetes.io/exclude-from-external-load-balancers:
+      "$patch": "delete"
