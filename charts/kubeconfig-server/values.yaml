@@ -44,4 +44,16 @@ ingress:
   annotations: {}
   # cert-manager.io/cluster-issuer: "letsencrypt-prd"
 
+httpRoute:
+  enabled: false
+  gateway:
+    name: gateway
+    # Optional: specify if gateway is in a different namespace
+    namespace: ""
+  hostnames:
+    - kubeconfig-server.local
+  path: /
+  pathType: PathPrefix
+  annotations: {}
+
 podAnnotations: {}

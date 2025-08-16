@@ -1,0 +1,34 @@
+{{- if .Values.httpRoute.enabled }}
+{{- $fullName := include "kubeconfig-server.fullname" . }}
+{{- $svcPort := .Values.service.port }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "kubeconfig-server.labels" . | nindent 4 }}
+  {{- with .Values.httpRoute.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.httpRoute.gateway.name }}
+  parentRefs:
+    - name: {{ .Values.httpRoute.gateway.name | quote }}
+      {{- if .Values.httpRoute.gateway.namespace }}
+      namespace: {{ .Values.httpRoute.gateway.namespace | quote }}
+      {{- end }}
+  {{- end }}
+  hostnames:
+    {{- range $host := .Values.httpRoute.hostnames }}
+    - {{ $host | quote }}
+    {{- end }}
+  rules:
+    - matches:
+        - path:
+            type: {{ .Values.httpRoute.pathType | quote }}
+            value: {{ .Values.httpRoute.path | quote }}
+      backendRefs:
+        - name: {{ $fullName }}
+          port: {{ $svcPort }}
+{{- end }}
