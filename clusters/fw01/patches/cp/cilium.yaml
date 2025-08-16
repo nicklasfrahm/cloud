@@ -98,7 +98,7 @@ cluster:
                     - /bin/sh
                     - -c
                     - |
-                      helm upgrade cilium oci://ghcr.io/nicklasfrahm/charts/gateway-api \
+                      helm upgrade gateway-api oci://ghcr.io/nicklasfrahm/charts/gateway-api \
                         --install \
                         --namespace kube-system
                       helm upgrade cilium oci://ghcr.io/nicklasfrahm/charts/cilium \
