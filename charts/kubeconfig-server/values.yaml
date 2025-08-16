@@ -1,0 +1,59 @@
+# Default values for kubeconfig-server
+
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: ""
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+kubeconfig:
+  # Base64 encoded kubeconfig content
+  content: |
+    # This is a placeholder for the kubeconfig content.
+    # REPLACE THIS BUT DO NOT INCLUDE SENSITIVE DATA HERE.
+  # Or reference a secret
+  existingSecret: ""
+  existingSecretKey: "kubeconfig"
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 64Mi
+
+securityContext:
+  runAsUser: 101
+  runAsGroup: 101
+  fsGroup: 101
+
+ingress:
+  enabled: false
+  className: cilium
+  hosts:
+    - kubeconfig-server.local
+  path: /
+  pathType: Prefix
+  tls:
+    enabled: true
+  annotations: {}
+  # cert-manager.io/cluster-issuer: "letsencrypt-prd"
+
+httpRoute:
+  enabled: false
+  gateway:
+    name: gateway
+    # Optional: specify if gateway is in a different namespace
+    namespace: ""
+  hostnames:
+    - kubeconfig-server.local
+  path: /
+  pathType: PathPrefix
+  annotations: {}
+
+podAnnotations: {}

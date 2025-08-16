@@ -1,0 +1,10 @@
+apiVersion: v2
+name: kubeconfig-server
+description: |
+  A Helm chart to serve non-sensitive kubeconfig files
+  via a simple web server. This chart must only be used
+  if you use OIDC to authenticate to your Kubernetes cluster.
+type: application
+icon: https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg
+version: 0.1.0
+appVersion: "1.27.4-alpine"
