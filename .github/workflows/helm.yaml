@@ -333,6 +333,12 @@ jobs:
           mapfile -t changed_charts < <(git diff --name-only HEAD~1 | grep -oP 'charts/\K[^/]+' | sort -u)
 
           for chart in "${changed_charts[@]}"; do
+            # If the chart was deleted, skip it.
+            if [[ ! -d "charts/$chart" ]]; then
+              echo "Skipping deleted chart: $chart"
+              continue
+            fi
+
             [[ ! -f "charts/$chart/Chart.lock" ]] && helm dependency build "charts/$chart"
             helm package "charts/$chart"
             helm push $chart-*.tgz oci://ghcr.io/nicklasfrahm/charts
