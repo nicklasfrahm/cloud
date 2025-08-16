@@ -174,6 +174,12 @@ jobs:
           echo '| --- | --- | --- | --- |' >>pending.md
 
           for chart in "${changed_charts[@]}"; do
+            # This is a deleted chart. Any version is valid.
+            if [[ ! -d "pr/charts/$chart" ]]; then
+              echo "| $chart | ✅ | N/A | N/A |" >>pending.md
+              continue
+            fi
+
             pr_version=$(grep -oP '^version: \K[^\n]+' pr/charts/$chart/Chart.yaml | tr -d '\n')
 
             # This is a new chart. Any version is valid.
