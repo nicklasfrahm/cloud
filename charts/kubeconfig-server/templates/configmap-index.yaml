@@ -9,6 +9,8 @@ data:
     <!DOCTYPE html>
     <html>
     <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Kubernetes Configuration</title>
       <style type="text/css">
         * {
@@ -89,11 +91,65 @@ data:
           font-size: 16px;
           color: white;
           padding: 1rem;
-          margin-left: 1rem;
           border-radius: 1rem;
           overflow-x: auto;
+          position: relative;
+        }
+
+        .code-container {
+          position: relative;
+          margin-left: 1.25rem;
+        }
+
+        .copy-button {
+          position: absolute;
+          background-color: #101828;
+          top: 0.75rem;
+          right: 0.75rem;
+          border-width: 2px;
+          border-style: solid;
+          border-color: #1e2939;
+          border-radius: 0.5rem;
+          padding: 0.5rem;
+          cursor: pointer;
+          color: white;
+          font-size: 14px;
+          transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .copy-button:hover {
+          background-color: #1e2939;
+        }
+
+        .copy-button.copied {
+          background-color: #28a745;
+          border-color: #28a745;
+        }
+
+        .copy-button.copied:hover {
+          background-color: #218838;
+          border-color: #218838;
         }
       </style>
+      <script type="text/javascript">
+        function copyCode(button, text) {
+          navigator.clipboard.writeText(text).then(function() {
+            // Hide clipboard icon, show checkmark
+            button.querySelector('.clipboard-icon').style.display = 'none';
+            button.querySelector('.checkmark-icon').style.display = 'inline';
+            button.classList.add('copied');
+
+            // Reset after 2 seconds
+            setTimeout(function() {
+              button.querySelector('.clipboard-icon').style.display = 'inline';
+              button.querySelector('.checkmark-icon').style.display = 'none';
+              button.classList.remove('copied');
+            }, 2000);
+          }).catch(function(err) {
+            console.error('Failed to copy text: ', err);
+          });
+        }
+      </script>
     </head>
     <body>
       <div class="main-container">
@@ -101,17 +157,29 @@ data:
           <h1>Kubernetes Configuration</h1>
           <h2>Download kubeconfig</h2>
           <p>Click the button below to download your kubeconfig file.</p>
-          <a href="/kubeconfig.yaml" class="download-button">Download kubeconfig</a>
+          <a href="/kubeconfig" class="download-button">Download kubeconfig</a>
 
           <h3>Usage Instructions</h3>
           <p>After downloading the kubeconfig file, follow the steps below.</p>
           <ol>
             <li>Save it to a secure location</li>
             <li>Use it with kubectl by setting the KUBECONFIG environment variable:
-              <pre>export KUBECONFIG=/path/to/kubeconfig.yaml</pre>
+              <div class="code-container">
+                <pre>export KUBECONFIG=/path/to/kubeconfig.yaml</pre>
+                <button class="copy-button" onclick="copyCode(this, 'export KUBECONFIG=/path/to/kubeconfig.yaml')">
+                  <span class="clipboard-icon">📋</span>
+                  <span class="checkmark-icon" style="display: none;">✅</span>
+                </button>
+              </div>
             </li>
             <li>Or use it directly with kubectl commands:
-              <pre>kubectl --kubeconfig=/path/to/kubeconfig.yaml get pods</pre>
+              <div class="code-container">
+                <pre>kubectl --kubeconfig=/path/to/kubeconfig.yaml get pods</pre>
+                <button class="copy-button" onclick="copyCode(this, 'kubectl --kubeconfig=/path/to/kubeconfig.yaml get pods')">
+                  <span class="clipboard-icon">📋</span>
+                  <span class="checkmark-icon" style="display: none;">✅</span>
+                </button>
+              </div>
             </li>
           </ol>
         </div>

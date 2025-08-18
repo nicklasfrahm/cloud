@@ -70,8 +70,8 @@ spec:
               subPath: index.html
               readOnly: true
             - name: kubeconfig
-              mountPath: /usr/share/nginx/html/kubeconfig.yaml
-              subPath: kubeconfig.yaml
+              mountPath: /usr/share/nginx/html/kubeconfig
+              subPath: kubeconfig
               readOnly: true
             - name: tmp-dir
               mountPath: /tmp
