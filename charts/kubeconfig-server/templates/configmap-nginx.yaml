@@ -14,7 +14,7 @@ data:
       add_header X-Content-Type-Options "nosniff" always;
       add_header X-Frame-Options "DENY" always;
       add_header X-XSS-Protection "1; mode=block" always;
-      add_header Content-Security-Policy "default-src 'self'; frame-ancestors 'none';" always;
+      add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; frame-ancestors 'none';" always;
       add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
       add_header Referrer-Policy "no-referrer" always;
 
@@ -26,6 +26,7 @@ data:
         index index.html;
         # Prevent excessive requests
         limit_req zone=one burst=10 nodelay;
+        limit_req_status 429;
         # Only allow GET and HEAD request methods
         limit_except GET HEAD {
           deny all;
@@ -34,8 +35,9 @@ data:
 
       location /kubeconfig {
         root /usr/share/nginx/html;
-        add_header Content-Disposition "attachment; filename=kubeconfig";
+        add_header Content-Disposition "attachment; filename=kubeconfig.yaml";
         add_header Content-Type "application/yaml";
+        limit_req_status 429;
         # Only allow GET method
         limit_except GET {
           deny all;
