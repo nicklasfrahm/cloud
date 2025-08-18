@@ -115,6 +115,8 @@ data:
           color: white;
           font-size: 14px;
           transition: background-color 0.3s ease, border-color 0.3s ease;
+          -webkit-tap-highlight-color: transparent;
+          tap-highlight-color: transparent;
         }
 
         .copy-button:hover {
