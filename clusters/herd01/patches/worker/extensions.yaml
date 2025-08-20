@@ -1,0 +1,7 @@
+machine:
+  install:
+    extensions:
+      - image: ghcr.io/siderolabs/nonfree-kmod-nvidia-production
+      - image: ghcr.io/siderolabs/nvidia-container-toolkit-production
+      - image: ghcr.io/siderolabs/nvidia-fabricmanager-production
+      - image: ghcr.io/siderolabs/nvidia-open-gpu-kernel-modules-production
