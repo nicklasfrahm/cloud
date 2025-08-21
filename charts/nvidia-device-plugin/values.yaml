@@ -1,0 +1,9 @@
+nvidia-device-plugin:
+  enabled: true
+  runtimeClassName: nvidia
+
+runtimeClass:
+  enabled: true
+
+commonLabels: {}
+commonAnnotations: {}
