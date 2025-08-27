@@ -1,0 +1,9 @@
+name: herd01
+endpoint: https://herd01.nicklasfrahm.dev:6443
+nodes:
+  controlplanes:
+    - 10.0.20.1
+    - 10.0.20.2
+    - 10.0.20.3
+  workers:
+    - 10.0.20.4

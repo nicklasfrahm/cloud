@@ -3,6 +3,7 @@ argocd:
   configs:
     cm:
       admin.enabled: false
+      kustomize.buildOptions: --enable-helm
     params:
       server.insecure: true
     # TODO: Verify this.
