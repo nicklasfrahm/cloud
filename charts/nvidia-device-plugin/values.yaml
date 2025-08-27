@@ -2,6 +2,10 @@ nvidia-device-plugin:
   enabled: true
   runtimeClassName: nvidia
 
+  # We won't be using the default namespace, but we
+  # need to set this to avoid issues while templating.
+  allowDefaultNamespace: true
+
 runtimeClass:
   enabled: true
 
