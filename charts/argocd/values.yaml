@@ -4,20 +4,25 @@ argocd:
     cm:
       admin.enabled: false
       kustomize.buildOptions: --enable-helm
+      url: "https://REPLACE_ME.argocd.example.com"
+      oidc.config: |
+        name: nicklasfrahm.dev
+        issuer: https://nicklasfrahm.eu.auth0.com/
+        clientID: eozs4sPgyyHh0eb3NgaTFbwdTyN2QzAF
+        skipAudienceCheckWhenTokenHasNoAudience: true
+        enablePKCEAuthentication: true
+        requestedScopes:
+        - openid
+        - profile
+        - email
+        - 'https://nicklasfrahm.dev/groups'
+      scopes: '["https://nicklasfrahm.dev/groups","email"]'
+      policy.default: role:readonly
+      policy.csv: |
+        # Provide full access to platform admins.
+        g, platform-admin, role:admin
     params:
       server.insecure: true
-    # TODO: Verify this.
-    oidc.config: |
-      name: Auth0
-      issuer: https://nicklasfrahm.eu.auth0.com/
-      clientID: eozs4sPgyyHh0eb3NgaTFbwdTyN2QzAF
-      skipAudienceCheckWhenTokenHasNoAudience: true
-      requestedIDTokenClaims: {"groups": {"essential": true}}
-      enablePKCEAuthentication: true
-    policy.default: ""
-    policy.csv: |
-      # Provide full access to platform admins.
-      g, platform-admin, role:admin
   redis:
     enabled: false
   dex:
@@ -28,4 +33,4 @@ httpRoute:
   gateway:
     namespace: cloud-system
     name: shared-http
-  hostname: "argocd.example.com"
+  hostname: "REPLACE_ME.argocd.example.com"
