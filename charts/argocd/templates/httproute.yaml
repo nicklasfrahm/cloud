@@ -12,10 +12,11 @@ spec:
     - {{ .Values.httpRoute.hostname | quote }}
   rules:
     - matches:
-        path:
-          type: PathPrefix
-          value: /
+        - path:
+            type: PathPrefix
+            value: /
       backendRefs:
         - name: {{ printf "%s-server" .Release.Name | quote }}
+          namespace: {{ .Release.Namespace | quote }}
           port: 80
 {{- end }}

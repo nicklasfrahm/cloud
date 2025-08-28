@@ -26,6 +26,6 @@ argocd:
 httpRoute:
   enabled: true
   gateway:
-    namespace: kube-system
+    namespace: cloud-system
     name: shared-http
   hostname: "argocd.example.com"
