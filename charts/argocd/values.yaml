@@ -6,7 +6,7 @@ argocd:
       kustomize.buildOptions: --enable-helm
       url: "https://REPLACE_ME.argocd.example.com"
       oidc.config: |
-        name: nicklasfrahm.dev
+        name: Google
         issuer: https://nicklasfrahm.eu.auth0.com/
         clientID: eozs4sPgyyHh0eb3NgaTFbwdTyN2QzAF
         skipAudienceCheckWhenTokenHasNoAudience: true
