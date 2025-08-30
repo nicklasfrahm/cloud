@@ -1,0 +1,4 @@
+machine:
+  kubelet:
+    clusterDNS:
+      - 172.30.0.10

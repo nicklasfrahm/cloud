@@ -1,0 +1,36 @@
+argocd:
+  enabled: true
+  configs:
+    cm:
+      admin.enabled: false
+      kustomize.buildOptions: --enable-helm
+      url: "https://REPLACE_ME.argocd.example.com"
+      oidc.config: |
+        name: Google
+        issuer: https://nicklasfrahm.eu.auth0.com/
+        clientID: eozs4sPgyyHh0eb3NgaTFbwdTyN2QzAF
+        skipAudienceCheckWhenTokenHasNoAudience: true
+        enablePKCEAuthentication: true
+        requestedScopes:
+        - openid
+        - profile
+        - email
+        - 'https://nicklasfrahm.dev/groups'
+      scopes: '["https://nicklasfrahm.dev/groups","email"]'
+      policy.default: role:readonly
+      policy.csv: |
+        # Provide full access to platform admins.
+        g, platform-admin, role:admin
+    params:
+      server.insecure: true
+  redis:
+    enabled: false
+  dex:
+    enabled: false
+
+httpRoute:
+  enabled: true
+  gateway:
+    namespace: cloud-system
+    name: shared-http
+  hostname: "REPLACE_ME.argocd.example.com"
