@@ -1,0 +1,15 @@
+apiVersion: v2
+name: metrics-server
+description: A Helm chart for to deploy the Kubernetes Metrics Server.
+type: application
+icon: https://artifacthub.io/image/92b1716e-c455-4113-9a8e-1141b2961479
+version: 0.1.0
+appVersion: "3.13.0"
+dependencies:
+  - name: metrics-server
+    version: 3.13.0
+    repository: https://kubernetes-sigs.github.io/metrics-server/
+    condition: metrics-server.enabled
+    tags:
+      - monitoring
+      - autoscaling
