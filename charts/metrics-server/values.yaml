@@ -1,0 +1,10 @@
+metrics-server:
+  enabled: true
+  # By default, kubelet certificates only contain the hostname as a SAN.
+  # If we want to skip installing a lot of extra components, we can use
+  # insecure TLS to connect to the kubelets.
+  # References:
+  # - https://www.talos.dev/v1.10/kubernetes-guides/configuration/deploy-metrics-server/#install-after-bootstrap
+  # - https://github.com/siderolabs/talos/issues/3502
+  args:
+    - --kubelet-insecure-tls
