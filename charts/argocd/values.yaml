@@ -15,8 +15,8 @@ argocd:
         - openid
         - profile
         - email
-        - 'https://nicklasfrahm.dev/groups'
-      scopes: '["https://nicklasfrahm.dev/groups","email"]'
+        claimMapping:
+          groups: "https://nicklasfrahm.dev/roles"
       policy.default: role:readonly
       policy.csv: |
         # Provide full access to platform admins.
