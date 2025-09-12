@@ -7,7 +7,7 @@ argocd:
       url: "https://REPLACE_ME.argocd.example.com"
       oidc.config: |
         name: Google
-        issuer: https://nicklasfrahm.eu.auth0.com/
+        issuer: https://auth.nicklasfrahm.dev/
         clientID: eozs4sPgyyHh0eb3NgaTFbwdTyN2QzAF
         skipAudienceCheckWhenTokenHasNoAudience: true
         enablePKCEAuthentication: true
@@ -15,16 +15,19 @@ argocd:
         - openid
         - profile
         - email
-        claimMapping:
-          groups: "https://nicklasfrahm.dev/roles"
-      policy.default: role:readonly
+        - https://nicklasfrahm.dev/groups
+        requestedIDTokenClaims:
+          groups:
+            essential: true
+      scopes: "[https://nicklasfrahm.dev/groups, email]"
+      policy.default: ""
       policy.csv: |
         # Provide full access to platform admins.
         g, platform-admin, role:admin
     params:
       server.insecure: true
   redis:
-    enabled: false
+    enabled: true
   dex:
     enabled: false
 

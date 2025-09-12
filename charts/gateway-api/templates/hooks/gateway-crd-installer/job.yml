@@ -9,6 +9,7 @@ metadata:
     "helm.sh/hook-weight": "-1"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded,hook-failed
 spec:
+  ttlSecondsAfterFinished: 300
   template:
     metadata:
       name: {{ .Release.Name }}-gateway-crd-installer

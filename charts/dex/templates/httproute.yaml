@@ -4,7 +4,7 @@ kind: HTTPRoute
 metadata:
   name: {{ printf "%s-server" .Release.Name | quote }}
   namespace: {{ .Release.Namespace | quote }}
-  labels: {{- include "argocd.labels" . | nindent 4 }}
+  labels: {{- include "dex.labels" . | nindent 4 }}
 spec:
   parentRefs:
     - namespace: {{ .Values.httpRoute.gateway.namespace | quote }}
@@ -17,7 +17,7 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: {{ printf "%s-server" .Release.Name | quote }}
+        - name: {{ printf "%s" .Release.Name | quote }}
           namespace: {{ .Release.Namespace | quote }}
-          port: 80
+          port: 5556
 {{- end }}
