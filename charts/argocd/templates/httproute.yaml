@@ -4,6 +4,7 @@ kind: HTTPRoute
 metadata:
   name: {{ printf "%s-server" .Release.Name | quote }}
   namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "argocd.labels" . | nindent 4 }}
 spec:
   parentRefs:
     - namespace: {{ .Values.httpRoute.gateway.namespace | quote }}

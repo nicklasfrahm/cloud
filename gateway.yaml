@@ -1,0 +1,4 @@
+gateway:
+  hostnames:
+    - argocd.herd01.nicklasfrahm.dev
+    - auth.nicklasfrahm.dev
