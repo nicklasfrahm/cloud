@@ -8,3 +8,5 @@ metrics-server:
   # - https://github.com/siderolabs/talos/issues/3502
   args:
     - --kubelet-insecure-tls
+    - --logging-format=json
+    - --v=0
