@@ -1,0 +1,13 @@
+cluster:
+  apiServer:
+    extraArgs:
+      logging-format: json
+      v: "0"
+  controllerManager:
+    extraArgs:
+      logging-format: json
+      v: "0"
+  scheduler:
+    extraArgs:
+      logging-format: json
+      v: "0"

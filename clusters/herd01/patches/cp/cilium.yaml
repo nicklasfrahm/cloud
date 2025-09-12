@@ -1,11 +1,4 @@
 cluster:
-  allowSchedulingOnControlPlanes: true
-  # Enable OIDC authentication.
-  apiServer:
-    extraArgs:
-      oidc-issuer-url: https://nicklasfrahm.eu.auth0.com/
-      oidc-client-id: Xxy6PZe1WmCFcIwNLNw5XXXlxGJ8YWAP
-      oidc-username-claim: email
   network:
     # Configure Pod and Service CIDR ranges.
     podSubnets:
