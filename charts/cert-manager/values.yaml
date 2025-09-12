@@ -1,8 +1,17 @@
 cert-manager:
   enabled: true
+  global:
+    logLevel: 0
   crds:
     # Avoid managing CRDs manually.
     # Let Helm do it, it's less painful.
     enabled: true
   extraArgs:
     - "--enable-gateway-api"
+    - "--logging-format=json"
+  cainjector:
+    extraArgs:
+      - "--logging-format=json"
+  webhook:
+    extraArgs:
+      - "--logging-format=json"
