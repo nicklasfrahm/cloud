@@ -1,0 +1,5 @@
+machine:
+  kubelet:
+    extraArgs:
+      logging-format: json
+      v: "0"
