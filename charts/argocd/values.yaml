@@ -17,10 +17,16 @@ argocd:
         requestedIDTokenClaims:
           groups:
             essential: true
+    rbac:
       scopes: "[groups, email]"
       policy.default: ""
-      policy.csv: |
-        g, nicklasfrahm-dev:platform, role:admin
+      policy.custom.csv: |
+        p, role:platform, applicationsets, *, */*, allow
+        p, role:platform, applications, *, */*, allow
+        p, role:platform, clusters, get, *, allow
+        p, role:platform, repositories, get, *, allow
+
+        g, nicklasfrahm-dev:platform, role:platform
     params:
       server.insecure: true
   redis:
