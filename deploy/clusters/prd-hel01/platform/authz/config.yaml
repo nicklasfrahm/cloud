@@ -1,0 +1,4 @@
+chart:
+  repo: ghcr.io/nicklasfrahm/charts
+  name: authz
+  tag: 0.2.0
