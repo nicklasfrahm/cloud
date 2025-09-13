@@ -3,6 +3,7 @@ module github.com/nicklasfrahm/cloud
 go 1.25.0
 
 require (
+	github.com/nicklasfrahm-dev/appkit v0.2.2
 	github.com/onsi/ginkgo/v2 v2.25.1
 	github.com/onsi/gomega v1.38.2
 	github.com/spf13/cobra v1.9.1
