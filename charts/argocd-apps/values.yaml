@@ -1,0 +1,9 @@
+cluster: dev-lab01
+
+repository: https://github.com/nicklasfrahm/cloud
+
+tenants: []
+# Each tenant lives in its own namespace.
+# Example:
+# tenants:
+# - name: system

@@ -1,0 +1,53 @@
+{{- $cluster := .Values.cluster -}}
+{{- $environment := splitList "-" .Values.cluster | first -}}
+{{- $tenants := append .Values.tenants (dict "name" "platform") -}}
+{{- range $tenant := $tenants -}}
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: tenant-{{ $tenant.name }}
+  namespace: {{ $.Release.Namespace | quote }}
+spec:
+  goTemplate: true
+  generators:
+    - git:
+        repoURL: {{ $.Values.repository | quote }}
+        revision: main
+        files:
+          - path: "deploy/clusters/{{ $cluster }}/{{ $tenant.name }}/**/config.yaml"
+  template:
+    metadata:
+      # name: {{ printf "%s-%s" $tenant.name "{{ .chart.release }}" | trunc 63 | trimSuffix "-" | lower | quote }}
+      namespace: {{ $.Release.Namespace | quote }}
+      name: '{{ $tenant.name }}-{{`{{ default .chart.name .chart.release }}`}}'
+      annotations:
+        argocd.argoproj.io/compare-options: ServerSideDiff=true,IncludeMutationWebhook=true
+    spec:
+      project: default
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{ .name }}'
+      sources:
+        - repoURL: '{{`{{.chart.repo}}`}}'
+          chart: '{{`{{.chart.name}}`}}'
+          targetRevision: '{{`{{.chart.tag}}`}}'
+          helm:
+            releaseName: '{{`{{ default .chart.name .chart.release }}`}}'
+            valueFiles:
+              - '$values/deploy/services/{{`{{ default .chart.name .chart.release }}`}}/envs/base.yaml'
+              - '$values/deploy/services/{{`{{ default .chart.name .chart.release }}`}}/envs/{{ $environment }}.yaml'
+              - '$values/deploy/services/{{`{{ default .chart.name .chart.release }}`}}/clusters/{{ $cluster }}.yaml'
+              - '$values/deploy/clusters/{{ $cluster }}/{{ $tenant.name }}/{{`{{ default .chart.name .chart.release }}`}}/values.yaml'
+        - repoURL: {{ $.Values.repository | quote }}
+          targetRevision: main
+          ref: values
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+          - PruneLast=true
+---
+{{- end }}
