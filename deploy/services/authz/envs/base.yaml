@@ -1,0 +1,4 @@
+global:
+  admins:
+    groups:
+      - nicklasfrahm-dev:platform
