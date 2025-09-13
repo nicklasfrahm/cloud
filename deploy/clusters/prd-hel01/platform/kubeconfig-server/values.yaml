@@ -1,0 +1,37 @@
+httpRoute:
+  enabled: true
+  hostnames:
+  - kubeconfig.herd01.nicklasfrahm.dev
+kubeconfig:
+  content: |
+    apiVersion: v1
+    clusters:
+      - cluster:
+          certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJpRENDQVMrZ0F3SUJBZ0lRT28zZytma0NScGZvM3lJaGE2emJjREFLQmdncWhrak9QUVFEQWpBVk1STXcKRVFZRFZRUUtFd3ByZFdKbGNtNWxkR1Z6TUI0WERUSTFNRGd4TURFMU1EWXpOMW9YRFRNMU1EZ3dPREUxTURZegpOMW93RlRFVE1CRUdBMVVFQ2hNS2EzVmlaWEp1WlhSbGN6QlpNQk1HQnlxR1NNNDlBZ0VHQ0NxR1NNNDlBd0VICkEwSUFCT2NHYkRHd1RXcVBvb0tycmZYMHMxWFBZc3oycWR3NXlTY3RQM0xBVXVJbGliYTJkQ1R0UlU5UTB0ZUoKMFhwaWRKSktTTEx2RGpYcXE4OHFrRkFOaXNTallUQmZNQTRHQTFVZER3RUIvd1FFQXdJQ2hEQWRCZ05WSFNVRQpGakFVQmdnckJnRUZCUWNEQVFZSUt3WUJCUVVIQXdJd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFCkZnUVVyOVBHSVNZY2JBRlYwcVZadDk1SDA2SCtncWt3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdSQUlnV0lValNaQXYKVHRQOStFbDVQb3ZwWU1iN3BwcnorYjhGMWp1aWk4YThtQXNDSUV6UnJGZ3hEMnZyYkhUa3NLcHdTcHBrcUI4NgorejVOZ1JyblBwbUErUlk5Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+          server: https://herd01.nicklasfrahm.dev:6443
+        name: herd01
+    contexts:
+      - context:
+          cluster: herd01
+          namespace: cloud-system
+          user: oidc
+        name: oidc@herd01
+    current-context: oidc@herd01
+    kind: Config
+    preferences: {}
+    users:
+      - name: oidc
+        user:
+          exec:
+            apiVersion: client.authentication.k8s.io/v1
+            args:
+              - oidc-login
+              - get-token
+              - --oidc-issuer-url=https://auth.nicklasfrahm.dev
+              - --oidc-client-id=kubernetes
+              - --oidc-extra-scope=email
+              - --oidc-extra-scope=groups
+            command: kubectl
+            env: null
+            interactiveMode: Never
+            provideClusterInfo: false
