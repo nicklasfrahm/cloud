@@ -19,11 +19,16 @@ dex:
             - name: nicklasfrahm-dev
     staticClients:
       - id: kubernetes
+        name: "Kubernetes"
+        public: true
         redirectURIs:
           - "http://localhost:8000"
           - "http://localhost:18000"
-        name: "kubernetes"
+      - id: argocd
+        name: "ArgoCD"
         public: true
+        redirectURIs:
+          - "https://argocd.herd01.nicklasfrahm.dev/auth/callback"
   envVars:
     # The GitHub OIDC secrets are manually created using:
     # kubectl create secret generic dex-github --from-literal=GITHUB_CLIENT_ID=<client-id> --from-literal=GITHUB_CLIENT_SECRET=<client-secret>
