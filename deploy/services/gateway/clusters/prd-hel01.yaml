@@ -1,0 +1,5 @@
+gateway:
+  hostnames:
+  - argocd.herd01.nicklasfrahm.dev
+  - kubeconfig.herd01.nicklasfrahm.dev
+  - auth.nicklasfrahm.dev

@@ -1,0 +1,4 @@
+chart:
+  repo: ghcr.io/nicklasfrahm/charts
+  name: cert-manager
+  version: 0.1.2
