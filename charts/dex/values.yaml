@@ -46,6 +46,6 @@ dex:
 httpRoute:
   enabled: true
   gateway:
-    namespace: cloud-system
+    namespace: platform
     name: shared-http
   hostname: "auth.nicklasfrahm.dev"
