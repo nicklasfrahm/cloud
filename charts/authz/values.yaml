@@ -1,3 +1,4 @@
 global:
   admins:
     users: []
+    groups: []

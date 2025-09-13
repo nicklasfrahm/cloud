@@ -1,4 +1,4 @@
-{{- if .Values.global.admins.users }}
+{{- if or .Values.global.admins.users .Values.global.admins.groups }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -12,6 +12,11 @@ roleRef:
 subjects:
 {{- range .Values.global.admins.users }}
   - kind: User
+    name: {{ . | quote }}
+    apiGroup: rbac.authorization.k8s.io
+{{- end }}
+{{- range .Values.global.admins.groups }}
+  - kind: Group
     name: {{ . | quote }}
     apiGroup: rbac.authorization.k8s.io
 {{- end }}

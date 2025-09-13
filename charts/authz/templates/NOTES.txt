@@ -1,10 +1,18 @@
 {{- if .Values.global.admins.users }}
 Successfully configured admin access for the following users:
-{{ range $user := .Values.adminUsers }}
-- {{ $user.email }}
+{{- range $user := .Values.global.admins.users }}
+- {{ $user }}
 {{- end }}
-{{- else }}
-You have not configured any admin users. Please
-add admin users to the `global.adminUsers` list
-in your `values.yaml` file.
+{{- end }}
+{{- if .Values.global.admins.groups }}
+Successfully configured admin access for the following groups:
+{{- range $group := .Values.global.admins.groups }}
+- {{ $group }}
+{{- end }}
+{{- end }}
+{{- if not (or .Values.global.admins.users .Values.global.admins.groups) }}
+You have not configured any admin users or groups.
+Please add admin users to the `global.admins.users`
+list or admin groups to the `global.admins.groups`
+list in your `values.yaml` file.
 {{- end }}
