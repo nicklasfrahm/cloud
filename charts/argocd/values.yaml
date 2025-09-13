@@ -3,32 +3,31 @@ argocd:
   configs:
     cm:
       admin.enabled: false
-      kustomize.buildOptions: --enable-helm
       url: "https://REPLACE_ME.argocd.example.com"
       oidc.config: |
-        name: Google
-        issuer: https://auth.nicklasfrahm.dev/
-        clientID: eozs4sPgyyHh0eb3NgaTFbwdTyN2QzAF
-        skipAudienceCheckWhenTokenHasNoAudience: true
+        name: SSO
+        issuer: https://auth.nicklasfrahm.dev
+        clientID: argocd
         enablePKCEAuthentication: true
         requestedScopes:
         - openid
         - profile
         - email
-        - https://nicklasfrahm.dev/groups
+        - groups
         requestedIDTokenClaims:
           groups:
             essential: true
-      scopes: "[https://nicklasfrahm.dev/groups, email]"
+      scopes: "[groups, email]"
       policy.default: ""
       policy.csv: |
-        # Provide full access to platform admins.
-        g, platform-admin, role:admin
+        g, nicklasfrahm-dev:platform, role:admin
     params:
       server.insecure: true
   redis:
     enabled: true
   dex:
+    enabled: false
+  notifications:
     enabled: false
 
 httpRoute:
