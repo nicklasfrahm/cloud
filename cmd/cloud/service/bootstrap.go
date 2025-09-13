@@ -130,6 +130,6 @@ func newDefaultConfig(serviceName string) string {
 	return fmt.Sprintf(`chart:
   repo: ghcr.io/nicklasfrahm/charts
   name: %s
-  version: 0.1.0
+  tag: 0.1.0
 `, serviceName)
 }
