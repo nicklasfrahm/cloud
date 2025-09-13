@@ -1,5 +1,4 @@
 chart:
   repo: ghcr.io/nicklasfrahm/charts
-  chart: kubeconfig-server
+  name: kubeconfig-server
   tag: 0.3.0
-  release: kubeconfig-server
