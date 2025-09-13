@@ -1,0 +1,7 @@
+apiVersion: v2
+type: application
+name: argocd-apps
+description: Configure ArgoCD ApplicationSets for multi-tenant clusters.
+icon: https://artifacthub.io/image/e16221f4-a3b1-49f6-9b65-cb4dbf30ed83
+version: 0.1.0
+appVersion: "0.1.0"
