@@ -2,7 +2,7 @@ kserve:
   enabled: true
   kserve:
     controller:
-      deploymentMode: Standard
+      deploymentMode: RawDeployment
       gateway:
         ingressGateway:
           enableGatewayApi: true
