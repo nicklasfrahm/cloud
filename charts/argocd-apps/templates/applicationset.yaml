@@ -49,5 +49,10 @@ spec:
           - CreateNamespace=true
           - ServerSideApply=true
           - PruneLast=true
+        {{- if eq $tenant.name "platform" }}
+        managedNamespaceMetadata:
+          labels:
+            pod-security.kubernetes.io/enforce: privileged
+        {{- end }}
 ---
 {{- end }}
