@@ -1,0 +1,19 @@
+apiVersion: v2
+name: kserve
+description: |
+  A Helm chart to deploy KServe, a Kubernetes-based platform for
+  serving machine learning models. KServe provides a standardized
+  and scalable way to deploy, manage, and monitor ML models in production.
+type: application
+icon: https://kserve.github.io/website/img/kserve-logo.png
+version: 0.1.0
+appVersion: "v0.15.2"
+dependencies:
+  - repository: oci://ghcr.io/kserve/charts
+    name: kserve-crd
+    version: v0.15.2
+    condition: kserve-crd.enabled
+  - repository: oci://ghcr.io/kserve/charts
+    name: kserve
+    version: v0.15.2
+    condition: kserve.enabled

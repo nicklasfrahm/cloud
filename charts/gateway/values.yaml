@@ -8,6 +8,9 @@ gateway:
       name: "letsencrypt-production"
   hostnames:
     - "example.com"
+  infrastructure:
+    labels: {}
+    # serving.kserve.io/gateway: shared-http
 
 issuers:
   letsEncryptProduction:

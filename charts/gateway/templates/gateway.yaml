@@ -31,3 +31,8 @@ spec:
           from: All
     {{- end }}
   {{- end }}
+  {{- if $.Values.gateway.infrastructure.labels }}
+  infrastructure:
+    labels:
+      {{- toYaml $.Values.gateway.infrastructure.labels | nindent 6 }}
+  {{- end }}

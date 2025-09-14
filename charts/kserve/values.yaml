@@ -1,0 +1,12 @@
+kserve:
+  enabled: true
+  kserve:
+    controller:
+      deploymentMode: Standard
+      gateway:
+        ingressGateway:
+          enableGatewayApi: true
+          kserveGateway: platform/shared-http
+
+kserve-crd:
+  enabled: true
