@@ -5,6 +5,8 @@ nvidia-device-plugin:
   # We won't be using the default namespace, but we
   # need to set this to avoid issues while templating.
   allowDefaultNamespace: true
+  gfd:
+    enabled: true
 
 runtimeClass:
   enabled: true
