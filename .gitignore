@@ -57,3 +57,6 @@ talosconfig
 
 # Ignore virtual environment directories.
 .venv/
+
+# Ignore model files downloaded for conversion.
+models/
