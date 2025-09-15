@@ -77,7 +77,7 @@ OCI_REPO="${2}"
 MODEL_NAME="${3:-model}"
 
 # Create venv in current working directory
-VENV_DIR="${PWD}/.venv-nemo"
+VENV_DIR="${PWD}/.venv"
 
 # Create temporary directory
 TMP_DIR="$(mktemp -d)"
