@@ -60,3 +60,9 @@ talosconfig
 
 # Ignore model files downloaded for conversion.
 models/
+
+# Ignore Python cache files.
+__pycache__/
+
+# Ignore audio files.
+*.wav
