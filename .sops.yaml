@@ -1,9 +1,0 @@
-stores:
-  yaml:
-    indent: 2
-
-creation_rules:
-  - path_regex: .*\.secret\.ya?ml$
-    encrypted_regex: "^(data|stringData)$"
-    age: >-
-      age1xpz9gr6r0ps0536whpzrpyknyr74rcfqrjmwqmtdpfmpzv6yu4csf3zlpd
