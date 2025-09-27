@@ -1,5 +1,5 @@
-name: herd01
-endpoint: https://herd01.nicklasfrahm.dev:6443
+name: cph02
+endpoint: https://cph02.nicklasfrahm.dev:6443
 nodes:
   controlplanes:
     - name: alpaca
