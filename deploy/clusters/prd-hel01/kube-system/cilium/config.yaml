@@ -1,0 +1,4 @@
+chart:
+  repo: ghcr.io/nicklasfrahm/charts
+  name: cilium
+  tag: 0.5.0
