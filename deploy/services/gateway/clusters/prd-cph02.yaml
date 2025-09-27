@@ -1,0 +1,6 @@
+gateway:
+  hostnames:
+    - argocd.cph02.nicklasfrahm.dev
+    - kubeconfig.cph02.nicklasfrahm.dev
+    - auth.nicklasfrahm.dev
+    - kommodity.io
