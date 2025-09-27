@@ -1,7 +1,8 @@
-{{- $cluster := .Values.cluster -}}
-{{- $environment := splitList "-" .Values.cluster | first -}}
-{{- range $name, $tenant := .Values.tenants -}}
-{{- if $tenant.enabled -}}
+{{- $cluster := .Values.cluster }}
+{{- $environment := splitList "-" .Values.cluster | first }}
+{{- range $name, $tenant := .Values.tenants }}
+{{- if $tenant.enabled }}
+---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -55,6 +56,5 @@ spec:
           labels:
             pod-security.kubernetes.io/enforce: privileged
         {{- end }}
----
 {{- end }}
 {{- end }}
