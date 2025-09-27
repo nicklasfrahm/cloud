@@ -2,8 +2,12 @@ cluster: dev-lab01
 
 repository: https://github.com/nicklasfrahm/cloud
 
-tenants: []
 # Each tenant lives in its own namespace.
-# Example:
-# tenants:
-# - name: system
+# By default, there are two tenants:
+# - kube-system: for cluster components (e.g., cilium, metrics-server, etc.)
+# - platform: for platform components (e.g., cert-manager, external-dns, etc.)
+tenants:
+  platform:
+    enabled: true
+  kube-system:
+    enabled: true
