@@ -1,11 +1,12 @@
-{{- $cluster := .Values.cluster -}}
-{{- $environment := splitList "-" .Values.cluster | first -}}
-{{- $tenants := append .Values.tenants (dict "name" "platform") -}}
-{{- range $tenant := $tenants -}}
+{{- $cluster := .Values.cluster }}
+{{- $environment := splitList "-" .Values.cluster | first }}
+{{- range $name, $tenant := .Values.tenants }}
+{{- if $tenant.enabled }}
+---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: tenant-{{ $tenant.name }}
+  name: tenant-{{ $name }}
   namespace: {{ $.Release.Namespace | quote }}
 spec:
   goTemplate: true
@@ -14,19 +15,18 @@ spec:
         repoURL: {{ $.Values.repository | quote }}
         revision: main
         files:
-          - path: "deploy/clusters/{{ $cluster }}/{{ $tenant.name }}/**/config.yaml"
+          - path: "deploy/clusters/{{ $cluster }}/{{ $name }}/**/config.yaml"
   template:
     metadata:
-      # name: {{ printf "%s-%s" $tenant.name "{{ .chart.release }}" | trunc 63 | trimSuffix "-" | lower | quote }}
       namespace: {{ $.Release.Namespace | quote }}
-      name: '{{ $tenant.name }}-{{`{{ default .chart.name .chart.release }}`}}'
+      name: '{{ $name }}-{{`{{ default .chart.name .chart.release }}`}}'
       annotations:
         argocd.argoproj.io/compare-options: ServerSideDiff=true,IncludeMutationWebhook=true
     spec:
       project: default
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{ .name }}'
+        namespace: '{{ $name }}'
       sources:
         - repoURL: '{{`{{.chart.repo}}`}}'
           chart: '{{`{{.chart.name}}`}}'
@@ -37,7 +37,7 @@ spec:
               - '$values/deploy/services/{{`{{ default .chart.name .chart.release }}`}}/envs/base.yaml'
               - '$values/deploy/services/{{`{{ default .chart.name .chart.release }}`}}/envs/{{ $environment }}.yaml'
               - '$values/deploy/services/{{`{{ default .chart.name .chart.release }}`}}/clusters/{{ $cluster }}.yaml'
-              - '$values/deploy/clusters/{{ $cluster }}/{{ $tenant.name }}/{{`{{ default .chart.name .chart.release }}`}}/values.yaml'
+              - '$values/deploy/clusters/{{ $cluster }}/{{ $name }}/{{`{{ default .chart.name .chart.release }}`}}/values.yaml'
         - repoURL: {{ $.Values.repository | quote }}
           targetRevision: main
           ref: values
@@ -46,13 +46,15 @@ spec:
           prune: true
           selfHeal: true
         syncOptions:
-          - CreateNamespace=true
           - ServerSideApply=true
           - PruneLast=true
-        {{- if eq $tenant.name "platform" }}
+        {{- if ne $name "kube-system" }}
+          - CreateNamespace=true
+        {{- end }}
+        {{- if eq $name "platform" }}
         managedNamespaceMetadata:
           labels:
             pod-security.kubernetes.io/enforce: privileged
         {{- end }}
----
+{{- end }}
 {{- end }}
