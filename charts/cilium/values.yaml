@@ -78,3 +78,8 @@ cilium:
       enabled: true
     ui:
       enabled: true
+
+  # Enable BGP peering.
+  # Docs: https://docs.cilium.io/en/latest/network/bgp-control-plane/bgp-control-plane/
+  bgpControlPlane:
+    enabled: true
