@@ -52,7 +52,6 @@ cilium:
   # Docs: https://docs.cilium.io/en/latest/network/node-ipam/
   nodeIPAM:
     enabled: true
-  defaultLBServiceIPAM: nodeipam
 
   # Enable cilium support for the Gateway API.
   # Docs: https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/#gs-gateway-api
