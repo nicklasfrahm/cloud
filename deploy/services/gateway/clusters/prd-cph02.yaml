@@ -4,3 +4,5 @@ gateway:
     - kubeconfig.cph02.nicklasfrahm.dev
     - auth.nicklasfrahm.dev
     - kommodity.io
+  addresses:
+    - value: 172.29.0.1
