@@ -7,6 +7,17 @@ metadata:
     {{- include "gateway.labels" $ | nindent 4 }}
 spec:
   gatewayClassName: {{ .Values.gateway.className | default "cilium" | quote }}
+  {{- if .Values.gateway.addresses }}
+  addresses:
+    {{- range .Values.gateway.addresses }}
+    - value: {{ .value | quote }}
+      {{- if .type }}
+      type: {{ .type | quote }}
+      {{- else }}
+      type: IPAddress
+      {{- end }}
+    {{- end }}
+  {{- end }}
   listeners:
   {{- range .Values.gateway.hostnames }}
     - protocol: HTTP
