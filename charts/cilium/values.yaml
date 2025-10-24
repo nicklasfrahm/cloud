@@ -23,6 +23,12 @@ cilium:
 
   kubeProxyReplacement: true
 
+  # Fix hairpin NAT to ensure that the
+  # cert-manager propagation check works.
+  # Reference: https://github.com/cilium/cilium/issues/28254#issuecomment-2102374304
+  bpf:
+    hostLegacyRouting: true
+
   securityContext:
     capabilities:
       ciliumAgent:
