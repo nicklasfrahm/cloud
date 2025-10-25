@@ -27,7 +27,7 @@ cilium:
   # cert-manager propagation check works.
   # Reference: https://github.com/cilium/cilium/issues/28254#issuecomment-2102374304
   bpf:
-    hostLegacyRouting: true
+    masquerade: true
 
   securityContext:
     capabilities:
