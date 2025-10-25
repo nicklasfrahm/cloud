@@ -25,9 +25,11 @@ cilium:
 
   # Fix hairpin NAT to ensure that the
   # cert-manager propagation check works.
-  # Reference: https://github.com/cilium/cilium/issues/28254#issuecomment-2102374304
+  # References:
+  # - https://github.com/cilium/cilium/issues/28254#issuecomment-2102374304
+  # - https://github.com/cilium/cilium/pull/36852
   bpf:
-    masquerade: true
+    hostLegacyRouting: true
 
   securityContext:
     capabilities:
