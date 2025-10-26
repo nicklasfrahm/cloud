@@ -1,0 +1,3 @@
+You have successfully deployed a URL redirect.
+
+{{ .Values.source.hostname }} now redirects to {{ .Values.target.url }}

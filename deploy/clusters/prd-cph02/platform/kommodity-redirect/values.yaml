@@ -1,0 +1,6 @@
+---
+source:
+  hostname: kommodity.io
+
+target:
+  url: https://github.com/kommodity-io/kommodity
