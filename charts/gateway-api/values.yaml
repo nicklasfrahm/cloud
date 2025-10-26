@@ -5,8 +5,8 @@ gatewayCRDInstaller:
   enabled: true
   # Configure the image used to install the Gateway API CRDs.
   image:
-    repository: "bitnami/kubectl"
-    tag: "1.33.2-debian-12-r2"
+    repository: "alpine/kubectl"
+    tag: "1.33.3"
   # Version of the Gateway API CRDs to install.
   # Docs: https://gateway-api.sigs.k8s.io/installation/
   version: "1.2.0"

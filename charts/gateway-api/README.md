@@ -47,14 +47,14 @@ helm install gateway-api ./charts/gateway-api -f custom-values.yaml
 
 The following table lists the configurable parameters of the gateway-api chart and their default values.
 
-| Parameter                              | Description                                  | Default               |
-| -------------------------------------- | -------------------------------------------- | --------------------- |
-| `gatewayCRDInstaller.enabled`          | Enable the installation of Gateway API CRDs  | `true`                |
-| `gatewayCRDInstaller.image.repository` | Container image repository for CRD installer | `bitnami/kubectl`     |
-| `gatewayCRDInstaller.image.tag`        | Container image tag for CRD installer        | `1.33.2-debian-12-r2` |
-| `gatewayCRDInstaller.version`          | Version of Gateway API CRDs to install       | `1.2.0`               |
-| `gatewayCRDInstaller.channel`          | Channel for CRDs (standard or experimental)  | `experimental`        |
-| `gatewayCRDInstaller.resources`        | List of specific CRDs to install             | See values.yaml       |
+| Parameter                              | Description                                  | Default          |
+| -------------------------------------- | -------------------------------------------- | ---------------- |
+| `gatewayCRDInstaller.enabled`          | Enable the installation of Gateway API CRDs  | `true`           |
+| `gatewayCRDInstaller.image.repository` | Container image repository for CRD installer | `alpine/kubectl` |
+| `gatewayCRDInstaller.image.tag`        | Container image tag for CRD installer        | `1.33.3`         |
+| `gatewayCRDInstaller.version`          | Version of Gateway API CRDs to install       | `1.2.0`          |
+| `gatewayCRDInstaller.channel`          | Channel for CRDs (standard or experimental)  | `experimental`   |
+| `gatewayCRDInstaller.resources`        | List of specific CRDs to install             | See values.yaml  |
 
 ### Available CRDs
 
@@ -75,8 +75,8 @@ gatewayCRDInstaller:
   version: "1.2.0"
   channel: "standard" # Use standard channel instead of experimental
   image:
-    repository: "bitnami/kubectl"
-    tag: "1.33.2-debian-12-r2"
+    repository: "alpine/kubectl"
+    tag: "1.33.3"
   resources:
     - gateway.networking.k8s.io_gatewayclasses
     - gateway.networking.k8s.io_gateways
