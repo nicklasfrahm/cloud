@@ -65,6 +65,7 @@ cilium:
   # Docs: https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/#gs-gateway-api
   gatewayAPI:
     enabled: true
+    enableAlpn: true
 
   # Ensure that we can create gateways for 80 and 443.
   # Docs: https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/#bind-to-privileged-port
