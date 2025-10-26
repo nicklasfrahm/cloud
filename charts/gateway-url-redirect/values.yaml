@@ -1,0 +1,13 @@
+# Configure the gateway to use.
+gateway:
+  name: shared-http
+  namespace: platform
+
+# Configure the endpoint of the redirect.
+source:
+  hostname: example.com
+  path: /
+
+# Configure the target URL to redirect to.
+target:
+  url: https://github.com/nicklasfrahm/cloud
