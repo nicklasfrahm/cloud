@@ -1,6 +1,1 @@
 ---
-cilium:
-  bpf:
-    # https://github.com/cilium/cilium/pull/36852
-    masquerade: false
-    hostLegacyRouting: true
