@@ -21,3 +21,23 @@ opentofu-count: opentofu-plan ## Count the number of changes in the plan.
 opentofu-apply: ## Apply the infrastructure changes.
 	tofu -chdir=deploy/opentofu init
 	tofu -chdir=deploy/opentofu apply -auto-approve
+
+#####################
+### LLM Packaging ###
+#####################
+
+REGISTRY							?= ghcr.io
+NAMESPACE							?= $(shell whoami)
+MODEL_REPO						?= "Qwen/Qwen2.5-0.5B-Instruct"
+MODEL_ALIAS						?= "qwen2-instruct"
+
+.PHONY: llm
+llm: ## Generate LLM assets.
+	docker build \
+		--secret id=HF_TOKEN \
+		-f llm.Containerfile \
+		--build-arg MODEL="$(MODEL_REPO)" \
+		--build-arg ALIAS="$(MODEL_ALIAS)" \
+		-t $(REGISTRY)/$(NAMESPACE)/models/$(MODEL_ALIAS):latest \
+		--load \
+		-t $(MODEL_ALIAS):latest .
