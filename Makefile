@@ -29,10 +29,10 @@ opentofu-apply: ## Apply the infrastructure changes.
 REGISTRY							?= ghcr.io
 NAMESPACE							?= $(shell whoami)
 MODEL_REPO						?= "Qwen/Qwen2.5-0.5B-Instruct"
-MODEL_ALIAS						?= "qwen2-instruct"
+MODEL_ALIAS						?= qwen2-instruct
 
-.PHONY: llm
-llm: ## Generate LLM assets.
+.PHONY: llm-build
+llm-build: ## Generate LLM assets.
 	docker build \
 		--secret id=HF_TOKEN \
 		-f llm.Containerfile \
@@ -41,3 +41,7 @@ llm: ## Generate LLM assets.
 		-t $(REGISTRY)/$(NAMESPACE)/models/$(MODEL_ALIAS):latest \
 		--load \
 		-t $(MODEL_ALIAS):latest .
+
+.PHONY: llm-push
+llm-push: llm-build ## Push LLM assets to container registry.
+	docker push $(REGISTRY)/$(NAMESPACE)/models/$(MODEL_ALIAS):latest
