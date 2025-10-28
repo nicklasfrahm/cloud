@@ -30,6 +30,7 @@ REGISTRY							?= ghcr.io
 NAMESPACE							?= $(shell whoami)
 MODEL_REPO						?= "Qwen/Qwen2.5-0.5B-Instruct"
 MODEL_ALIAS						?= qwen2-instruct
+VERSION								?= latest
 
 .PHONY: llm-build
 llm-build: ## Generate LLM assets.
@@ -38,10 +39,10 @@ llm-build: ## Generate LLM assets.
 		-f llm.Containerfile \
 		--build-arg MODEL="$(MODEL_REPO)" \
 		--build-arg ALIAS="$(MODEL_ALIAS)" \
-		-t $(REGISTRY)/$(NAMESPACE)/models/$(MODEL_ALIAS):latest \
+		-t $(REGISTRY)/$(NAMESPACE)/models/$(MODEL_ALIAS):$(VERSION) \
 		--load \
-		-t $(MODEL_ALIAS):latest .
+		-t $(MODEL_ALIAS):$(VERSION) .
 
 .PHONY: llm-push
 llm-push: llm-build ## Push LLM assets to container registry.
-	docker push $(REGISTRY)/$(NAMESPACE)/models/$(MODEL_ALIAS):latest
+	docker push $(REGISTRY)/$(NAMESPACE)/models/$(MODEL_ALIAS):$(VERSION)
