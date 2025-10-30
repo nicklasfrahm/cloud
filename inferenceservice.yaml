@@ -15,10 +15,10 @@ spec:
             optional: false
     resources:
       requests:
-        memory: 2Gi
+        memory: 6Gi
         cpu: "1"
       limits:
-        memory: 4Gi
+        memory: 6Gi
         cpu: "1"
   supportedUriFormats:
     - prefix: hf://
