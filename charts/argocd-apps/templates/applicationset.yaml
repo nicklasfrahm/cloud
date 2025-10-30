@@ -1,32 +1,44 @@
 {{- $cluster := .Values.cluster }}
 {{- $environment := splitList "-" .Values.cluster | first }}
-{{- range $name, $tenant := .Values.tenants }}
-{{- if $tenant.enabled }}
+{{- range $tenantName, $tenantConfig := .Values.tenants }}
+{{- if $tenantConfig.enabled }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: tenant-{{ $name }}
+  name: tenant-{{ $tenantName }}
   namespace: {{ $.Release.Namespace | quote }}
 spec:
   goTemplate: true
   generators:
-    - git:
-        repoURL: {{ $.Values.repository | quote }}
-        revision: main
-        files:
-          - path: "deploy/clusters/{{ $cluster }}/{{ $name }}/**/config.yaml"
+    - matrix:
+        generators:
+        - git:
+            repoURL: {{ $.Values.repository | quote }}
+            revision: main
+            files:
+              - path: "deploy/clusters/{{ $cluster }}/{{ $tenantName }}.yaml"
+        - list:
+            elementsYaml: |
+              {{`{{- range $releaseName, $config := .apps }}`}}
+              - releaseName: {{`{{ $releaseName | quote }}`}}
+                repository: {{`{{ $.settings.repository | quote }}`}}
+                chart: {{`{{ default $releaseName $config.chart | quote }}`}}
+                {{`{{- range $key, $value := $config | omit "chart" }}`}}
+                {{`{{ $key }}: {{ $value | quote }}`}}
+                {{`{{- end }}`}}
+              {{`{{- end }}`}}
   template:
     metadata:
       namespace: {{ $.Release.Namespace | quote }}
-      name: '{{ $name }}-{{`{{ default .chart.name .chart.release }}`}}'
+      name: '{{ $tenantName }}-{{`{{ .chart.release }}`}}'
       annotations:
         argocd.argoproj.io/compare-options: ServerSideDiff=true,IncludeMutationWebhook=true
     spec:
       project: default
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{ $name }}'
+        namespace: '{{ $tenantName }}'
       sources:
         - repoURL: '{{`{{.chart.repo}}`}}'
           chart: '{{`{{.chart.name}}`}}'
@@ -34,6 +46,7 @@ spec:
           helm:
             releaseName: '{{`{{ default .chart.name .chart.release }}`}}'
             valueFiles:
+              - '$values/deploy/services/{{`{{ .ch}}`}}
               - '$values/deploy/services/{{`{{ default .chart.name .chart.release }}`}}/envs/base.yaml'
               - '$values/deploy/services/{{`{{ default .chart.name .chart.release }}`}}/envs/{{ $environment }}.yaml'
               - '$values/deploy/services/{{`{{ default .chart.name .chart.release }}`}}/clusters/{{ $cluster }}.yaml'
@@ -48,10 +61,10 @@ spec:
         syncOptions:
           - ServerSideApply=true
           - PruneLast=true
-        {{- if ne $name "kube-system" }}
+        {{- if ne $tenantName "kube-system" }}
           - CreateNamespace=true
         {{- end }}
-        {{- if eq $name "platform" }}
+        {{- if eq $tenantName "platform" }}
         managedNamespaceMetadata:
           labels:
             pod-security.kubernetes.io/enforce: privileged
