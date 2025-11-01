@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
 interface Service {
   release: string;

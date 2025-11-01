@@ -15,16 +15,22 @@ function readDirSafe(p: string): string[] {
 export class FilesystemClient implements SynapseClient {
   async listClusters(): Promise<string[]> {
     const clustersDir = path.join(ROOT, "deploy/clusters");
-    return readDirSafe(clustersDir).filter((f) => fs.statSync(path.join(clustersDir, f)).isDirectory());
+    return readDirSafe(clustersDir).filter((f) =>
+      fs.statSync(path.join(clustersDir, f)).isDirectory()
+    );
   }
 
   async listServices(): Promise<Service[]> {
     const servicesDir = path.join(ROOT, "deploy/services");
-    const releases = readDirSafe(servicesDir).filter((f) => fs.statSync(path.join(servicesDir, f)).isDirectory());
+    const releases = readDirSafe(servicesDir).filter((f) =>
+      fs.statSync(path.join(servicesDir, f)).isDirectory()
+    );
     const services: Service[] = [];
     for (const r of releases) {
       const manifestDir = path.join(servicesDir, r);
-      const overlays = readDirSafe(manifestDir).filter((f) => f.endsWith(".yaml") || f.endsWith(".yml"));
+      const overlays = readDirSafe(manifestDir).filter(
+        (f) => f.endsWith(".yaml") || f.endsWith(".yml")
+      );
       // try to read 00-base.yaml for metadata
       const basePath = path.join(manifestDir, "00-base.yaml");
       let repository: string | undefined;
@@ -54,8 +60,12 @@ export class FilesystemClient implements SynapseClient {
     const servicesDir = path.join(ROOT, "deploy/services", release);
     const srcPath = path.join(servicesDir, src);
     const dstPath = path.join(servicesDir, dst);
-    const srcContent = fs.existsSync(srcPath) ? fs.readFileSync(srcPath, "utf8") : "";
-    const dstContent = fs.existsSync(dstPath) ? fs.readFileSync(dstPath, "utf8") : "";
+    const srcContent = fs.existsSync(srcPath)
+      ? fs.readFileSync(srcPath, "utf8")
+      : "";
+    const dstContent = fs.existsSync(dstPath)
+      ? fs.readFileSync(dstPath, "utf8")
+      : "";
     // simple line-by-line diff
     const srcLines = srcContent.split(/\r?\n/);
     const dstLines = dstContent.split(/\r?\n/);
@@ -74,7 +84,12 @@ export class FilesystemClient implements SynapseClient {
     return lines.join("\n");
   }
 
-  async promote(release: string, src: string, dst: string, title: string): Promise<{ ok: boolean; prUrl?: string; error?: string }> {
+  async promote(
+    release: string,
+    src: string,
+    dst: string,
+    title: string
+  ): Promise<{ ok: boolean; prUrl?: string; error?: string }> {
     // local filesystem promote: copy src to dst with a header comment
     const servicesDir = path.join(ROOT, "deploy/services", release);
     const srcPath = path.join(servicesDir, src);

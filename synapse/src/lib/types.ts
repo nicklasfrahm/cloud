@@ -11,5 +11,10 @@ export interface SynapseClient {
   listServices(): Promise<Service[]>;
   getService(release: string): Promise<Service | null>;
   getDiff(release: string, src: string, dst: string): Promise<string>;
-  promote(release: string, src: string, dst: string, title: string): Promise<{ ok: boolean; prUrl?: string; error?: string }>;
+  promote(
+    release: string,
+    src: string,
+    dst: string,
+    title: string
+  ): Promise<{ ok: boolean; prUrl?: string; error?: string }>;
 }

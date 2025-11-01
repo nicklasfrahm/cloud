@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Synapse
 
-## Getting Started
+Synapse is a developer platform frontend for managing releases and environment overlays stored in Git. It's a minimal Next.js + React + Tailwind Typescript app and includes a small, pluggable client interface so the UI can talk to either GitHub or local files for testing.
 
-First, run the development server:
+Key goals included in this repo:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Dashboard showing clusters and services.
+- Per-service pages with overlay YAMLs and promote/diff workflows.
+- A `SynapseClient` interface with interchangeable transports (`GitHubClient` and `FilesystemClient`).
+
+## Deployment config structure
+
+Deploy and release data follows this layout in the monorepo:
+
+```
+deploy/clusters/$cluster/$tenant/$release.yaml
+deploy/services/$release/
+	├── 00-base.yaml
+	├── 10-env-dev.yaml
+	├── 10-env-stg.yaml
+	├── 10-env-prd.yaml
+	└── 30-tenant-mytenant.yaml
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Each `release.yaml` references an OCI chart and a tag, for example:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```yaml
+repository: oci://ghcr.io/nicklasfrahm/charts
+release: sample
+chart: sample-chart
+tag: 0.3.0
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Frontend requirements
 
-## Learn More
+- Single-page app (Next.js + React + TailwindCSS).
+- `/` (Dashboard): shows cluster and service counts, search bar for services, click a service to view details.
+- `/services/:release`: shows overlays (00-base.yaml, 10-env-\*.yaml, etc.), with "Show diff" and "Promote" actions between environments. "Promote" shows a diff and opens a PR labeled `synapse`.
 
-To learn more about Next.js, take a look at the following resources:
+## SynapseClient interface
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The UI uses an interface so transports can be swapped during development or testing.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+interface SynapseClient {
+	listClusters(): Promise<string[]>;
+	listServices(): Promise<Service[]>;
+	getService(release: string): Promise<Service | null>;
+	getDiff(release: string, src: string, dst: string): Promise<string>;
+	promote(
+		release: string,
+		src: string,
+		dst: string,
+		title: string
+	): Promise<{ ok: boolean; prUrl?: string; error?: string }>;
+}
+```
 
-## Deploy on Vercel
+Transports implemented here:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `GitHubClient` (uses GitHub API)
+- `FilesystemClient` (reads from local `deploy/` data)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Local API endpoints (for dev/testing)
+
+Mock API endpoints are provided for the frontend to call during development:
+
+- `GET /api/synapse/clusters`
+- `GET /api/synapse/services`
+- `GET /api/synapse/services/[release]`
+- `POST /api/synapse/diff` (body: { release, src, dst })
+- `POST /api/synapse/promote` (body: { release, src, dst, title })
+
+## Getting started (dev)
+
+Install and run the Next.js app in `synapse/`:
+
+```bash
+cd synapse
+npm install
+npm run dev
+```
+
+Open http://localhost:3000 and explore the dashboard.
+
+## Notes & next steps
+
+- The repo includes examples and a working `FilesystemClient` so you can develop without hitting external APIs.
+- Small follow-ups that add value:
+  - Add unit tests for the `SynapseClient` implementations.
+  - Wire up GitHub PR creation with a smaller, documented service account.
+
+---
+
+If you'd like, I can also add a short CONTRIBUTING section and a tiny smoke test that hits the mock API endpoints.
