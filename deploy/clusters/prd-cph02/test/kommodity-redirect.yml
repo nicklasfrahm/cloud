@@ -1,4 +1,4 @@
-repository: oci://ghcr.io/nicklasfrahm/charts
+repository: ghcr.io/nicklasfrahm/charts
 release: kommodity-redirect
 chart: gateway-url-redirect
 tag: 0.1.0
