@@ -1,0 +1,4 @@
+repository: ghcr.io/nicklasfrahm/charts
+release: authz
+chart: authz
+tag: 0.2.0
