@@ -10,28 +10,18 @@ metadata:
   namespace: {{ $.Release.Namespace | quote }}
 spec:
   goTemplate: true
+  goTemplateOptions:
+    - "missingkey=error"
   generators:
-    - matrix:
-        generators:
-        - git:
-            repoURL: {{ $.Values.repository | quote }}
-            revision: main
-            files:
-              - path: "deploy/clusters/{{ $cluster }}/{{ $tenantName }}.yaml"
-        - list:
-            elementsYaml: |
-              {{`{{- range $releaseName, $config := .apps }}`}}
-              - releaseName: {{`{{ $releaseName | quote }}`}}
-                repository: {{`{{ $.settings.repository | quote }}`}}
-                chart: {{`{{ default $releaseName $config.chart | quote }}`}}
-                {{`{{- range $key, $value := $config | omit "chart" }}`}}
-                {{`{{ $key }}: {{ $value | quote }}`}}
-                {{`{{- end }}`}}
-              {{`{{- end }}`}}
+    - git:
+        repoURL: {{ $.Values.repository | quote }}
+        revision: main
+        files:
+          - path: "deploy/clusters/{{ $cluster }}/{{ $tenantName }}/**.yml"
   template:
     metadata:
       namespace: {{ $.Release.Namespace | quote }}
-      name: '{{ $tenantName }}-{{`{{ .chart.release }}`}}'
+      name: '{{ $tenantName }}-{{`{{ .release }}`}}'
       annotations:
         argocd.argoproj.io/compare-options: ServerSideDiff=true,IncludeMutationWebhook=true
     spec:
@@ -40,17 +30,17 @@ spec:
         server: https://kubernetes.default.svc
         namespace: '{{ $tenantName }}'
       sources:
-        - repoURL: '{{`{{.chart.repo}}`}}'
-          chart: '{{`{{.chart.name}}`}}'
-          targetRevision: '{{`{{.chart.tag}}`}}'
+        - repoURL: '{{`{{ .repository }}`}}'
+          chart: '{{`{{ .chart }}`}}'
+          targetRevision: '{{`{{ .tag }}`}}'
           helm:
-            releaseName: '{{`{{ default .chart.name .chart.release }}`}}'
+            releaseName: '{{`{{ .release }}`}}'
+            ignoreMissingValueFiles: true
             valueFiles:
-              - '$values/deploy/services/{{`{{ .ch}}`}}
-              - '$values/deploy/services/{{`{{ default .chart.name .chart.release }}`}}/envs/base.yaml'
-              - '$values/deploy/services/{{`{{ default .chart.name .chart.release }}`}}/envs/{{ $environment }}.yaml'
-              - '$values/deploy/services/{{`{{ default .chart.name .chart.release }}`}}/clusters/{{ $cluster }}.yaml'
-              - '$values/deploy/clusters/{{ $cluster }}/{{ $name }}/{{`{{ default .chart.name .chart.release }}`}}/values.yaml'
+              - '$values/deploy/services/{{`{{ .release }}`}}/00-base.yml'
+              - '$values/deploy/services/{{`{{ .release }}`}}/10-env-{{ $environment }}.yaml'
+              - '$values/deploy/services/{{`{{ .release }}`}}/20-cluster-{{ $cluster }}.yaml'
+              - '$values/deploy/services/{{`{{ .release }}`}}/30-tenant-{{ $tenantName }}.yaml'
         - repoURL: {{ $.Values.repository | quote }}
           targetRevision: main
           ref: values

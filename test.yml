@@ -1,0 +1,9 @@
+cluster: prd-cph02
+
+tenants:
+  platform:
+    enabled: false
+  kube-system:
+    enabled: false
+  test:
+    enabled: true
