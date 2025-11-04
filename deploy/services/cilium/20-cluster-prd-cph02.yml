@@ -4,3 +4,4 @@ cilium:
     # want to preserve the client IP.
     enableProxyProtocol: true
     enableAppProtocol: true
+    xffNumTrustedHops: 1
