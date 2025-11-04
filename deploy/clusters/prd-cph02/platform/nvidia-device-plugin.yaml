@@ -1,4 +1,0 @@
-repository: ghcr.io/nicklasfrahm/charts
-release: nvidia-device-plugin
-chart: nvidia-device-plugin
-tag: 0.1.1

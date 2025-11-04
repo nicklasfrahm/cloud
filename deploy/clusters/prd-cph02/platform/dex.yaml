@@ -1,4 +1,0 @@
-repository: ghcr.io/nicklasfrahm/charts
-release: dex
-chart: dex
-tag: 0.3.1

@@ -1,0 +1,5 @@
+cilium:
+  gatewayAPI:
+    # We are running behind HAProxy and
+    # want to preserve the client IP.
+    enableProxyProtocol: true
