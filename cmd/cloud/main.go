@@ -9,13 +9,16 @@ import (
 	"go.uber.org/zap"
 )
 
+// version holds the version of the application. It is injected at build time.
+var version string
 var help bool
 
 func RootCommand(logger *zap.Logger) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "cloud [command]",
-		Short: "cloud manages services in my infrastructure.",
-		Long:  `cloud is a command line tool to manage services in my infrastructure.`,
+		Use:     "cloud [command]",
+		Short:   "cloud manages services in my infrastructure.",
+		Long:    `cloud is a command line tool to manage services in my infrastructure.`,
+		Version: version,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			if help {
 				return cmd.Help()
