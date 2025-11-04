@@ -1,3 +1,18 @@
+#################
+### Cloud CLI ###
+#################
+
+SOURCES		:= $(shell find . -type f -name '*.go')
+VERSION		:= $(shell git describe --tags --always --dirty)
+GO_FLAGS	:= -ldflags "-s -w -X main.version=$(VERSION)"
+
+.PHONY: install
+install: bin/cloud
+	sudo install -Dm755 bin/cloud /usr/local/bin/cloud
+
+bin/cloud: $(SOURCES)
+	CGO_ENABLED=0 go build $(GO_FLAGS) -o bin/cloud ./cmd/cloud/main.go
+
 ################
 ### OpenTofu ###
 ################
