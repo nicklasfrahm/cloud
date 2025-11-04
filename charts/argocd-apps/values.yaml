@@ -1,6 +1,10 @@
 cluster: dev-lab01
 
-repository: https://github.com/nicklasfrahm/cloud
+config:
+  repository: https://github.com/nicklasfrahm/cloud
+
+chart:
+  repository: ghcr.io/nicklasfrahm/charts
 
 # Each tenant lives in its own namespace.
 # By default, there are two tenants:
