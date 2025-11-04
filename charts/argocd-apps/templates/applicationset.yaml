@@ -47,9 +47,11 @@ spec:
           targetRevision: main
           ref: values
       syncPolicy:
+        {{- if not $tenantConfig.disableAutoSync }}
         automated:
           prune: true
           selfHeal: true
+        {{- end }}
         syncOptions:
           - ServerSideApply=true
           - PruneLast=true
