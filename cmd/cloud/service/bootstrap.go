@@ -12,13 +12,14 @@ import (
 )
 
 const (
-	deployDir     = "deploy"
-	defaultValues = `---
-`
+	deployDir = "deploy"
+	// defaultValues is just an empty YAML file with a trailing newline.
+	defaultValues = ``
 )
 
 func Bootstrap(logger *zap.Logger) *cobra.Command {
 	var target string
+	var chart string
 
 	cmd := &cobra.Command{
 		Use:   "bootstrap <service>",
@@ -32,14 +33,11 @@ func Bootstrap(logger *zap.Logger) *cobra.Command {
 			}
 
 			serviceName := args[0]
+			serviceDir := path.Join(deployDir, "services", serviceName)
 
 			job := workflow.NewJob(
-				workflow.EnsureDirectory(path.Join(deployDir, "services", serviceName, "clusters")),
-				workflow.EnsureDirectory(path.Join(deployDir, "services", serviceName, "envs")),
-				workflow.EnsureFile(
-					path.Join(deployDir, "services", serviceName, "envs", "base.yaml"),
-					[]byte(defaultValues),
-				),
+				workflow.EnsureDirectory(serviceDir),
+				workflow.EnsureFile(path.Join(serviceDir, "00-base.yml"), []byte(defaultValues)),
 			)
 
 			environments, clusters, err := getEnvironmentsAndClusters()
@@ -48,39 +46,31 @@ func Bootstrap(logger *zap.Logger) *cobra.Command {
 			}
 
 			for _, environment := range environments {
-				job.AddStep(workflow.EnsureFile(
-					path.Join(deployDir, "services", serviceName, "envs", environment+".yaml"),
-					[]byte(defaultValues),
-				))
+				job.AddStep(workflow.EnsureFile(path.Join(serviceDir, "10-env-"+environment+".yml"), []byte(defaultValues)))
 			}
 
 			for _, cluster := range clusters {
-				job.AddStep(workflow.EnsureFile(
-					path.Join(deployDir, "services", serviceName, "clusters", cluster+".yaml"),
-					[]byte(defaultValues),
-				))
+				job.AddStep(workflow.EnsureFile(path.Join(serviceDir, "20-cluster-"+cluster+".yml"), []byte(defaultValues)))
 			}
 
 			if target != "" {
 				chunks := strings.Split(target, "/")
 				if len(chunks) != 2 {
-					return fmt.Errorf("found invalid target format: expected <environment>/<cluster> but got: %s", target)
+					return fmt.Errorf("found invalid target format: expected <cluster>/<tenant> but got: %s", target)
 				}
 
 				cluster := chunks[0]
 				tenant := chunks[1]
+				tenantDir := path.Join(deployDir, "clusters", cluster, tenant)
 
-				job.AddStep(workflow.EnsureDirectory(
-					path.Join(deployDir, "clusters", cluster, tenant, serviceName),
-				))
-				job.AddStep(workflow.EnsureFile(
-					path.Join(deployDir, "clusters", cluster, tenant, serviceName, "config.yaml"),
-					[]byte(newDefaultConfig(serviceName)),
-				))
-				job.AddStep(workflow.EnsureFile(
-					path.Join(deployDir, "clusters", cluster, tenant, serviceName, "values.yaml"),
-					[]byte(defaultValues),
-				))
+				job.AddStep(workflow.EnsureDirectory(tenantDir))
+
+				// Default to service name if the chart is not provided.
+				if chart == "" {
+					chart = serviceName
+				}
+
+				job.AddStep(workflow.EnsureFile(path.Join(tenantDir, serviceName+".yml"), []byte(newDefaultConfig(chart))))
 			}
 
 			err = job.Execute()
@@ -92,7 +82,8 @@ func Bootstrap(logger *zap.Logger) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&target, "target", "t", "", "The cluster to bootstrap the service in")
+	cmd.Flags().StringVarP(&target, "target", "T", "", "The combination of <cluster>/<tenant> to bootstrap the service in")
+	cmd.Flags().StringVarP(&chart, "chart", "C", "", "The chart name to use when deploying the service")
 
 	return cmd
 }
@@ -126,10 +117,8 @@ func getEnvironmentsAndClusters() ([]string, []string, error) {
 	return environments, clusters, nil
 }
 
-func newDefaultConfig(serviceName string) string {
-	return fmt.Sprintf(`chart:
-  repo: ghcr.io/nicklasfrahm/charts
-  name: %s
-  tag: 0.1.0
-`, serviceName)
+func newDefaultConfig(chart string) string {
+	return fmt.Sprintf(`chart: %s
+tag: 0.1.0
+`, chart)
 }
