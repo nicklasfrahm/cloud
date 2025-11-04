@@ -14,7 +14,7 @@ spec:
     - "missingkey=error"
   generators:
     - git:
-        repoURL: {{ $.Values.repository | quote }}
+        repoURL: {{ $.Values.config.repository | quote }}
         revision: main
         files:
           - path: "deploy/clusters/{{ $cluster }}/{{ $tenantName }}/**.yml"
@@ -40,10 +40,10 @@ spec:
             ignoreMissingValueFiles: true
             valueFiles:
               - '$values/deploy/services/{{`{{ .values.release }}`}}/00-base.yml'
-              - '$values/deploy/services/{{`{{ .values.release }}`}}/10-env-{{ $environment }}.yaml'
-              - '$values/deploy/services/{{`{{ .values.release }}`}}/20-cluster-{{ $cluster }}.yaml'
-              - '$values/deploy/services/{{`{{ .values.release }}`}}/30-tenant-{{ $tenantName }}.yaml'
-        - repoURL: {{ $.Values.repository | quote }}
+              - '$values/deploy/services/{{`{{ .values.release }}`}}/10-env-{{ $environment }}.yml'
+              - '$values/deploy/services/{{`{{ .values.release }}`}}/20-cluster-{{ $cluster }}.yml'
+              - '$values/deploy/services/{{`{{ .values.release }}`}}/30-tenant-{{ $tenantName }}.yml'
+        - repoURL: {{ $.Values.config.repository | quote }}
           targetRevision: main
           ref: values
       syncPolicy:
