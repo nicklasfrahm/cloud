@@ -1,4 +1,4 @@
-module github.com/nicklasfrahm/cloud
+module github.com/nicklasfrahm-dev/platform
 
 go 1.25.0
 

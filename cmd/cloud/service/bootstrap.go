@@ -6,7 +6,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/nicklasfrahm/cloud/cmd/cloud/workflow"
+	"github.com/nicklasfrahm-dev/platform/cmd/cloud/workflow"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )

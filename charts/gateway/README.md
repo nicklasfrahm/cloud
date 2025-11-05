@@ -22,13 +22,13 @@ This chart deploys a Kubernetes Gateway resource that manages ingress traffic us
 ### Install the chart
 
 ```bash
-helm install my-gateway oci://ghcr.io/nicklasfrahm/charts/gateway -n kube-system
+helm install my-gateway oci://ghcr.io/nicklasfrahm-dev/charts/gateway -n kube-system
 ```
 
 ### Install with custom values
 
 ```bash
-helm install my-gateway oci://ghcr.io/nicklasfrahm/charts/gateway -n kube-system -f my-values.yaml
+helm install my-gateway oci://ghcr.io/nicklasfrahm-dev/charts/gateway -n kube-system -f my-values.yaml
 ```
 
 ## Configuration
