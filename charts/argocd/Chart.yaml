@@ -6,7 +6,7 @@ icon: https://artifacthub.io/image/e16221f4-a3b1-49f6-9b65-cb4dbf30ed83
 version: 1.0.0
 appVersion: "9.1.0"
 dependencies:
-  - repository: oci://ghcr.io/argoproj/argo-helm/argo-cd
+  - repository: oci://ghcr.io/argoproj/argo-helm
     name: argo-cd
     alias: argocd
     version: 9.1.0
