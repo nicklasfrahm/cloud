@@ -1,0 +1,9 @@
+cluster: prd-cph02
+
+tenants:
+  argocd:
+    enabled: true
+  axon:
+    enabled: true
+  kommodity:
+    enabled: true

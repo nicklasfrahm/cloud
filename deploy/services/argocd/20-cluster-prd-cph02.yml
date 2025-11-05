@@ -1,0 +1,7 @@
+argocd:
+  configs:
+    cm:
+      url: "https://argocd.cph02.nicklasfrahm.dev"
+
+httpRoute:
+  hostname: "argocd.cph02.nicklasfrahm.dev"

@@ -1,0 +1,5 @@
+chart:
+  repository: ghcr.io/nicklasfrahm-dev/charts
+
+config:
+  repository: https://github.com/nicklasfrahm-dev/platform
