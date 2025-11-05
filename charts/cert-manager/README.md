@@ -20,13 +20,13 @@ This chart deploys cert-manager, a native Kubernetes certificate management cont
 ### Install the chart
 
 ```bash
-helm install cert-manager oci://ghcr.io/nicklasfrahm/charts/cert-manager -n cert-manager --create-namespace
+helm install cert-manager oci://ghcr.io/nicklasfrahm-dev/charts/cert-manager -n cert-manager --create-namespace
 ```
 
 ### Install with custom values
 
 ```bash
-helm install cert-manager oci://ghcr.io/nicklasfrahm/charts/cert-manager -n cert-manager --create-namespace -f my-values.yaml
+helm install cert-manager oci://ghcr.io/nicklasfrahm-dev/charts/cert-manager -n cert-manager --create-namespace -f my-values.yaml
 ```
 
 ## Configuration

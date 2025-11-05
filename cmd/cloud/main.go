@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/nicklasfrahm-dev/appkit/logging"
-	"github.com/nicklasfrahm/cloud/cmd/cloud/service"
+	"github.com/nicklasfrahm-dev/platform/cmd/cloud/service"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )

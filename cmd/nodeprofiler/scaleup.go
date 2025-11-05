@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/nicklasfrahm/cloud/cmd/nodeprofiler/scaleup"
+	"github.com/nicklasfrahm-dev/platform/cmd/nodeprofiler/scaleup"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
