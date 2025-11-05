@@ -55,7 +55,8 @@ spec:
         syncOptions:
           - ServerSideApply=true
           - PruneLast=true
-        {{- if ne $tenantName "kube-system" }}
+        {{- $defaultNamespaces := list "kube-system" "argocd" }}
+        {{- if not (has $tenantName $defaultNamespaces) }}
           - CreateNamespace=true
         {{- end }}
         {{- if eq $tenantName "platform" }}
