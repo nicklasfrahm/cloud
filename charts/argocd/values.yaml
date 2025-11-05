@@ -17,11 +17,6 @@ argocd:
         requestedIDTokenClaims:
           groups:
             essential: true
-      resource.customizations: |
-        "*":
-          ignoreDifferences:
-            - jsonPointers:
-                - /metadata/creationTimestamp
     rbac:
       scopes: "[groups, email]"
       policy.default: ""
