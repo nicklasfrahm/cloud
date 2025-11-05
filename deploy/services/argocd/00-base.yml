@@ -9,6 +9,6 @@ argocd:
       resource.customizations.ignoreDifferences.apps_StatefulSet: |
         jsonPointers:
           - /spec/template/metadata/creationTimestamp
-      resource.customizations.ignoreDifferences.DaemonSet: |
+      resource.customizations.ignoreDifferences.apps_DaemonSet: |
         jsonPointers:
           - /spec/template/metadata/creationTimestamp
