@@ -1,0 +1,14 @@
+argocd:
+  configs:
+    cm:
+      # TODO: Remove once the regression is fixed:
+      # https://github.com/argoproj/argo-cd/issues/25184
+      resource.customizations.ignoreDifferences.apps_Deployment: |
+        jsonPointers:
+          - /spec/template/metadata/creationTimestamp
+      resource.customizations.ignoreDifferences.apps_StatefulSet: |
+        jsonPointers:
+          - /spec/template/metadata/creationTimestamp
+      resource.customizations.ignoreDifferences.DaemonSet: |
+        jsonPointers:
+          - /spec/template/metadata/creationTimestamp
