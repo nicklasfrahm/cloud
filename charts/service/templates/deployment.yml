@@ -36,7 +36,7 @@ spec:
             {{- range $key, $value :=  .Values.env.fromSecrets }}
             - name: {{ $key | quote }}
               valueFrom:
-                secretRef:
+                secretKeyRef:
                   {{- range $secretName, $keyName := $value }}
                   name: {{ $secretName | quote }}
                   key: {{ $keyName | quote }}
