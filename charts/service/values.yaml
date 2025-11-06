@@ -43,8 +43,15 @@ autoscaling:
       targetUtilizationPercentage: 90
 
 env:
-  # Add environment variables here in "VARIABLE: value" format.
+  # Add environment variables from hardcoded values.
+  # The format is:
+  #   VARIABLE: value
   fromLiterals: {}
+  # Add environment variables from Kubernetes Secrets.
+  # The format is:
+  #   VARIABLE:
+  #     secretName: keyName
+  fromSecrets: {}
 
 resources:
   cpu: 50m

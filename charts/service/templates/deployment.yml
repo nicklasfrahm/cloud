@@ -33,10 +33,20 @@ spec:
               value: {{ .Values.platform.location | quote }}
             - name: TENANT
               value: {{ .Values.platform.tenant | quote }}
-          {{- with .Values.env.fromLiterals }}
+          {{- if or .Values.env.fromLiterals .Values.env.fromSecrets }}
           envFrom:
+            {{- if .Values.env.fromLiterals }}
             - secretRef:
                 name: {{ printf "%s-env" .Release.Name | quote }}
+            {{- end }}
+            {{- range $key, $value :=  .Values.env.fromSecrets }}
+            - name: {{ $key | quote }}
+              secretRef:
+                {{- range $secretName, $keyName := $value }}
+                name: {{ $secretName | quote }}
+                key: {{ $keyName | quote }}
+                {{- end }}
+            {{- end }}
           {{- end }}
           {{- if .Values.probes.startup.enabled }}
           startupProbe:
