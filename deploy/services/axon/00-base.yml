@@ -19,14 +19,11 @@ env:
 
 probes:
   liveness:
-    httpGet:
-      path: /
-      port: 8080
+    path: /
+    port: 8080
   readiness:
-    httpGet:
-      path: /
-      port: 8080
+    path: /
+    port: 8080
   startup:
-    httpGet:
-      path: /
-      port: 8080
+    path: /
+    port: 8080
