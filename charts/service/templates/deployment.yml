@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name | quote }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "service.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.autoscaling.minReplicas }}
+  {{- end }}
+  selector:
+    matchLabels: {{- include "service.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels: {{- include "service.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Release.Name | quote }}
+          image: {{ printf "%s:%s" .Values.image.repository .Values.image.tag | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.containerPort }}
+              protocol: TCP
+          env:
+            - name: PORT
+              value: {{ .Values.service.containerPort | quote }}
+            - name: CLUSTER
+              value: {{ .Values.platform.cluster | quote }}
+            - name: ENVIRONMENT
+              value: {{ .Values.platform.environment | quote }}
+            - name: LOCATION
+              value: {{ .Values.platform.location | quote }}
+            - name: TENANT
+              value: {{ .Values.platform.tenant | quote }}
+          {{- with .Values.env.fromLiterals }}
+          envFrom:
+            - secretRef:
+                name: {{ printf "%s-env" .Release.Name | quote }}
+          {{- end }}
+          {{- if .Values.probes.startup.enabled }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.probes.startup.path | quote }}
+              port: http
+          {{- end }}
+          {{- if .Values.probes.readiness.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path | quote }}
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          {{- end }}
+          {{- if .Values.probes.liveness.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.liveness.path | quote }}
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          {{- end }}
+          resources:
+            requests:
+              {{- range $key, $value := .Values.resources }}
+              {{ $key }}: {{ $value | quote }}
+              {{- end }}
+            limits:
+              {{- range $key, $value := .Values.resources }}
+              {{- if ne $key "cpu" }}
+              {{ $key }}: {{ $value | quote }}
+              {{- end }}
+              {{- end }}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: "kubernetes.io/hostname"
+          whenUnsatisfiable: {{ .Values.reliability.schedulingPolicy | quote }}
+          labelSelector:
+            matchLabels: {{- include "service.selectorLabels" . | nindent 14 }}
+        - maxSkew: 1
+          topologyKey: "topology.kubernetes.io/zone"
+          whenUnsatisfiable: {{ .Values.reliability.schedulingPolicy | quote }}
+          labelSelector:
+            matchLabels: {{- include "service.selectorLabels" . | nindent 14 }}

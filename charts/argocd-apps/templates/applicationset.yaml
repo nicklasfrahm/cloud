@@ -1,5 +1,6 @@
 {{- $cluster := .Values.cluster }}
 {{- $environment := splitList "-" .Values.cluster | first }}
+{{- $location := splitList "-" .Values.cluster | last }}
 {{- range $tenantName, $tenantConfig := .Values.tenants }}
 {{- if $tenantConfig.enabled }}
 ---
@@ -43,6 +44,13 @@ spec:
               - '$values/deploy/services/{{`{{ .values.release }}`}}/10-env-{{ $environment }}.yml'
               - '$values/deploy/services/{{`{{ .values.release }}`}}/20-cluster-{{ $cluster }}.yml'
               - '$values/deploy/services/{{`{{ .values.release }}`}}/30-tenant-{{ $tenantName }}.yml'
+            values: |
+              platform:
+                cluster: {{ $cluster | quote }}
+                environment: {{ $environment | quote }}
+                location: {{ $location | quote }}
+                tenant: {{ $tenantName | quote }}
+                domain: {{ $.Values.domain | quote }}
         - repoURL: {{ $.Values.config.repository | quote }}
           targetRevision: main
           ref: values
