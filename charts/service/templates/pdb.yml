@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Release.Name | quote }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "service.labels" . | nindent 4 }}
+spec:
+  maxUnavailable: {{ .Values.reliability.maxUnavailable | quote }}
+  selector:
+    matchLabels: {{- include "service.selectorLabels" . | nindent 6 }}

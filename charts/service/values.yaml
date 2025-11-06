@@ -1,0 +1,69 @@
+# These will automatically be injected by the `argocd-apps` chart.
+# No need to set them manually.
+platform:
+  cluster: "dev-lab01"
+  environment: "dev"
+  location: "lab01"
+  tenant: "demo"
+  domain: "nicklasfrahm.dev"
+
+image:
+  repository: "ghcr.io/nicklasfrahm-dev/axon"
+  tag: "v0.1.0"
+  pullPolicy: "IfNotPresent"
+
+expose:
+  enabled: false
+  host: ""
+  hostPrefix: ""
+  path:
+    type: "PathPrefix"
+    value: "/"
+    stripPrefix: false
+
+gateway:
+  name: "shared-http"
+  namespace: "platform"
+
+service:
+  type: ClusterIP
+  port: 80
+  containerPort: 8080
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  resource:
+    cpu:
+      enabled: true
+      targetUtilizationPercentage: 100
+    memory:
+      enabled: true
+      targetUtilizationPercentage: 90
+
+env:
+  # Add environment variables here in "VARIABLE: value" format.
+  fromLiterals: {}
+
+resources:
+  cpu: 50m
+  memory: 100Mi
+
+reliability:
+  maxUnavailable: 50%
+  schedulingPolicy: ScheduleAnyway
+
+probes:
+  liveness:
+    enabled: true
+    port: 8081
+    path: /live
+  readiness:
+    enabled: true
+    port: 8081
+    path: /ready
+  startup:
+    enabled: true
+    port: 8081
+    path: /startup

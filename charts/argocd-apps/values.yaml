@@ -1,5 +1,7 @@
 cluster: dev-lab01
 
+domain: nicklasfrahm.dev
+
 config:
   repository: https://github.com/nicklasfrahm-dev/platform
 
