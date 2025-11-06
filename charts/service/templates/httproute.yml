@@ -14,8 +14,8 @@ spec:
   hostnames:
     {{- if .Values.expose.host }}
     - {{ .Values.expose.host | quote }}
-    {{- else if .Values.platform.hostPrefix }}
-    - {{ printf "%s.%s" .Values.platform.hostPrefix .Values.platform.domain | quote }}
+    {{- else if .Values.expose.hostPrefix }}
+    - {{ printf "%s.%s" .Values.expose.hostPrefix .Values.platform.domain | quote }}
     {{- else }}
     - {{ printf "%s.%s.%s" .Release.Name .Values.platform.location .Values.platform.domain | quote }}
     {{- end }}
