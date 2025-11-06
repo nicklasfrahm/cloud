@@ -46,6 +46,7 @@ spec:
                 name: {{ $secretName | quote }}
                 key: {{ $keyName | quote }}
                 {{- end }}
+            {{- end }}
           {{- end }}
           {{- if .Values.probes.startup.enabled }}
           startupProbe:
