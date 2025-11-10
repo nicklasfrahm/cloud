@@ -9,7 +9,7 @@ platform:
 
 image:
   repository: "ghcr.io/nicklasfrahm-dev/axon"
-  tag: "v0.1.0"
+  tag: "0.2.1"
   pullPolicy: "IfNotPresent"
 
 expose:
