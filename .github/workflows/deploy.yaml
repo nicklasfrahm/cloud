@@ -39,7 +39,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: nicklasfrahm-dev/platform
-          ssh-key: ${{ secret.GITOPS_SSH_PRIVATE_KEY || inputs.github-ssh-key }}
+          ssh-key: ${{ secrets.GITOPS_SSH_PRIVATE_KEY || inputs.github-ssh-key }}
 
       - name: Validate service
         run: |
