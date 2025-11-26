@@ -63,14 +63,12 @@ spec:
         syncOptions:
           - ServerSideApply=true
           - PruneLast=true
-        {{- $defaultNamespaces := list "kube-system" "argocd" }}
-        {{- if not (has $tenantName $defaultNamespaces) }}
+        {{- if not ($tenantConfig.namespace).disableCreation }}
           - CreateNamespace=true
         {{- end }}
-        {{- if eq $tenantName "platform" }}
+        {{- if ($tenantConfig.namespace).labels }}
         managedNamespaceMetadata:
-          labels:
-            pod-security.kubernetes.io/enforce: privileged
+          labels: {{- $tenantConfig.namespace.labels | toYaml | nindent 12 }}
         {{- end }}
 {{- end }}
 {{- end }}

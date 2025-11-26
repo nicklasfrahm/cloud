@@ -3,7 +3,7 @@ type: application
 name: cert-manager
 description: Deploy cert-manager.
 icon: https://artifacthub.io/image/6d75ecff-a328-495b-a7fc-12cd84499974
-version: 1.0.0
+version: 1.0.1
 appVersion: "1.19.1"
 dependencies:
   - repository: https://charts.jetstack.io
