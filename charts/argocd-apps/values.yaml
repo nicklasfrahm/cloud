@@ -13,7 +13,11 @@ chart:
 # - kube-system: for cluster components (e.g., cilium, metrics-server, etc.)
 # - platform: for platform components (e.g., cert-manager, external-dns, etc.)
 tenants:
-  platform:
+  argocd:
     enabled: true
+    namespace:
+      disableCreation: true
   kube-system:
     enabled: true
+    namespace:
+      disableCreation: true

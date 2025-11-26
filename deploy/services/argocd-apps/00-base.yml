@@ -3,3 +3,10 @@ chart:
 
 config:
   repository: https://github.com/nicklasfrahm-dev/platform
+
+tenants:
+  platform:
+    enabled: true
+    namespace:
+      labels:
+        pod-security.kubernetes.io/enforce: privileged
