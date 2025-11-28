@@ -1,0 +1,41 @@
+rook-ceph-cluster:
+  enabled: true
+  toolbox:
+    enabled: true
+    resources:
+      limits:
+        memory: "128Mi"
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+
+  cephClusterSpec:
+    mgr:
+      modules:
+        - name: rook
+          enabled: true
+
+    # enable the ceph dashboard for viewing cluster status
+    dashboard:
+      enabled: true
+      ssl: true
+
+    # Network configuration, see: https://github.com/rook/rook/blob/master/Documentation/CRDs/Cluster/ceph-cluster-crd.md#network-configuration-settings
+    network:
+      connections:
+        encryption:
+          enabled: true
+        compression:
+          enabled: true
+        requireMsgr2: true
+
+    # enable log collector, daemons will log on files and rotate
+    logCollector:
+      enabled: false
+
+    # The option to automatically remove OSDs that are out and are safe to destroy.
+    removeOSDsIfOutAndSafeToRemove: true
+
+    storage:
+      config:
+        encryptedDevice: true
