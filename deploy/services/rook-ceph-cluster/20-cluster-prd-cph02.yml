@@ -17,10 +17,10 @@ rook-ceph-cluster:
     resources:
       mgr:
         limits:
-          memory: "512Mi"
+          memory: "1000Mi"
         requests:
           cpu: "250m"
-          memory: "512Mi"
+          memory: "1000Mi"
       mon:
         limits:
           memory: "1Gi"
