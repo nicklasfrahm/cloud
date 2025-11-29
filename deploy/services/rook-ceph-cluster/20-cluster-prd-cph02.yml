@@ -64,13 +64,13 @@ rook-ceph-cluster:
       nodes:
         - name: alpaca
           devices:
-            - name: "sdb"
+            - name: "sda"
         - name: bison
           devices:
-            - name: "sdb"
+            - name: "sda"
         - name: camel
           devices:
-            - name: "sdb"
+            - name: "sda"
 
   # -- Enable an HTTPRoute for the ceph-dashboard
   route:
