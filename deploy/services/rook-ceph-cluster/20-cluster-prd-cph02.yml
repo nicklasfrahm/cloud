@@ -75,6 +75,7 @@ rook-ceph-cluster:
     dashboard:
       host:
         name: ceph.cph02.nicklasfrahm.dev
+        pathType: PathPrefix
       parentRefs:
         - namespace: platform
           name: shared-http
@@ -245,6 +246,7 @@ rook-ceph-cluster:
         enabled: true
         host:
           name: s3.cph02.nicklasfrahm.dev
+          pathType: PathPrefix
         parentRefs:
           - namespace: platform
             name: shared-http
